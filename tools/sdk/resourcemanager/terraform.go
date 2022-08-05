@@ -309,3 +309,81 @@ type TerraformResourceTestsDefinition struct {
 	// resources required in the Tests.
 	TemplateConfiguration *string `json:"templateConfiguration,omitempty"`
 }
+
+var fieldObjectDefinitionsToGolangTypes = map[TerraformSchemaFieldType]string{
+	TerraformSchemaFieldTypeBoolean: "bool",
+	// whilst DateTime could be output as *time.Time the Go SDK outputs
+	// this as a String with Get/Set methods to allow exposing this value
+	// either as a raw string or by formatting the value, so we expect
+	// a string here rather than a *time.Time
+	TerraformSchemaFieldTypeDateTime: "string",
+	TerraformSchemaFieldTypeFloat:    "float64",
+	TerraformSchemaFieldTypeInteger:  "int64",
+	TerraformSchemaFieldTypeString:   "string",
+
+	// Common Types
+	TerraformSchemaFieldTypeEdgeZone:                      "string",
+	TerraformSchemaFieldTypeLocation:                      "string",
+	TerraformSchemaFieldTypeIdentitySystemAssigned:        "identity.ModelSystemAssigned",
+	TerraformSchemaFieldTypeIdentitySystemAndUserAssigned: "identity.ModelSystemAssignedUserAssigned",
+	TerraformSchemaFieldTypeIdentitySystemOrUserAssigned:  "identity.ModelSystemAssignedUserAssigned",
+	TerraformSchemaFieldTypeIdentityUserAssigned:          "identity.ModelUserAssigned",
+	TerraformSchemaFieldTypeResourceGroup:                 "string",
+	TerraformSchemaFieldTypeTags:                          "map[string]interface{}",
+	TerraformSchemaFieldTypeZone:                          "string",
+	TerraformSchemaFieldTypeZones:                         "[]string",
+}
+
+func (od TerraformSchemaFieldObjectDefinition) GolangFieldType() (*string, error) {
+	goTypeName, ok := fieldObjectDefinitionsToGolangTypes[od.Type]
+	if ok {
+		return &goTypeName, nil
+	}
+
+	if od.Type == TerraformSchemaFieldTypeReference {
+		if od.ReferenceName == nil {
+			return nil, fmt.Errorf("reference type had no reference")
+		}
+
+		// TODO: confirm these should be output as an array
+		output := fmt.Sprintf("[]%s", *od.ReferenceName)
+		return &output, nil
+	}
+
+	if od.Type == TerraformSchemaFieldTypeList {
+		if od.NestedObject == nil {
+			return nil, fmt.Errorf("list type had no nested object")
+		}
+
+		nestedObjectType, err := od.NestedObject.GolangFieldType()
+		if err != nil {
+			return nil, fmt.Errorf("retrieving golang field type for list nested item: %+v", err)
+		}
+
+		output := fmt.Sprintf("[]%s", *nestedObjectType)
+		if od.NestedObject.Type == TerraformSchemaFieldTypeReference {
+			// references are already output as slices, so no need to double-slice this
+			output = *nestedObjectType
+		}
+		return &output, nil
+	}
+
+	if od.Type == TerraformSchemaFieldTypeSet {
+		if od.NestedObject == nil {
+			return nil, fmt.Errorf("set type had no nested object")
+		}
+
+		nestedObjectType, err := od.NestedObject.GolangFieldType()
+		if err != nil {
+			return nil, fmt.Errorf("retrieving golang field type for list nested item: %+v", err)
+		}
+		output := fmt.Sprintf("[]%s", *nestedObjectType)
+		if od.NestedObject.Type == TerraformSchemaFieldTypeReference {
+			// references are already output as slices, so no need to double-slice this
+			output = *nestedObjectType
+		}
+		return &output, nil
+	}
+
+	return nil, fmt.Errorf("internal-error: unimplement field object definition mapping: %q", string(od.Type))
+}
