@@ -67,7 +67,7 @@ func codeForNonTopLevelModels(input models.ResourceInput) (*string, error) {
 func codeForModel(name string, input resourcemanager.TerraformSchemaModelDefinition) (*string, error) {
 	schemaFields := make([]string, 0)
 	for fieldName, fieldDetails := range input.Fields {
-		golandFieldType, err := golangFieldTypeFromObjectFieldDefinition(fieldDetails.ObjectDefinition)
+		golandFieldType, err := fieldDetails.ObjectDefinition.GolangFieldType()
 		if err != nil {
 			return nil, fmt.Errorf("determining Golang Field Type from ObjectDefinition for Field %q: %+v", fieldName, err)
 		}
