@@ -5,9 +5,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
+	"github.com/hashicorp/pandora/tools/generator-terraform/generator/resource/mappings"
 
 	"github.com/hashicorp/pandora/tools/generator-terraform/generator/models"
+	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
 type readFunctionComponents struct {
@@ -172,7 +173,7 @@ func (c readFunctionComponents) codeForResourceIdMappings() (*string, error) {
 
 func (c readFunctionComponents) codeForTopLevelMappings() (*string, error) {
 	// TODO: tests for this
-	mappings := make([]string, 0)
+	lines := make([]string, 0)
 
 	// ensure these are output alphabetically for consistency purposes across re-generations
 	orderedFieldNames := make([]string, 0)
@@ -188,15 +189,15 @@ func (c readFunctionComponents) codeForTopLevelMappings() (*string, error) {
 		}
 
 		assignmentVariable := fmt.Sprintf("schema.%s", tfFieldName)
-		codeForMapping, err := flattenAssignmentCodeForField(assignmentVariable, tfFieldName, tfField, c.topLevelModel, c.models)
+		codeForMapping, err := mappings.FlattenAssignmentCodeForField(assignmentVariable, tfFieldName, tfField)
 		if err != nil {
 			return nil, fmt.Errorf("building flatten assignment code for field %q: %+v", tfFieldName, err)
 		}
 
-		mappings = append(mappings, *codeForMapping)
+		lines = append(lines, *codeForMapping)
 	}
 
-	sort.Strings(mappings)
-	output := strings.Join(mappings, "\n")
+	sort.Strings(lines)
+	output := strings.Join(lines, "\n")
 	return &output, nil
 }

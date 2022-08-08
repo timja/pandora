@@ -1,4 +1,4 @@
-package resource
+package mappings
 
 import (
 	"fmt"
@@ -7,34 +7,11 @@ import (
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
-func expandAssignmentCodeForCreateField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
+func ExpandAssignmentCodeForField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, mapping string) (*string, error) {
 	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
 	// the expand function, which in turn needs to check if `Foo` is nil (and return
 	// whatever it needs too)
-	topLevelFieldMapping := *field.Mappings.SdkPathForCreate
-	if strings.Contains(topLevelFieldMapping, ".") {
-		split := strings.Split(topLevelFieldMapping, ".")
-		topLevelFieldMapping = split[0]
-
-		assignmentCode := fmt.Sprintf("r.expand%[1]s(config.%[2]s)", schemaFieldName, topLevelFieldMapping)
-		output := fmt.Sprintf("%s = %s", assignmentVariable, assignmentCode)
-		return &output, nil
-	}
-
-	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("config.%[1]s", schemaFieldName), field.ObjectDefinition)
-	if err != nil {
-		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", schemaFieldName, err)
-	}
-
-	output := fmt.Sprintf("%s = %s", assignmentVariable, *assignmentCode)
-	return &output, nil
-}
-
-func expandAssignmentCodeForUpdateField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
-	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
-	// the expand function, which in turn needs to check if `Foo` is nil (and return
-	// whatever it needs too)
-	topLevelFieldMapping := *field.Mappings.SdkPathForUpdate
+	topLevelFieldMapping := mapping
 	if strings.Contains(topLevelFieldMapping, ".") {
 		split := strings.Split(topLevelFieldMapping, ".")
 		topLevelFieldMapping = split[0]

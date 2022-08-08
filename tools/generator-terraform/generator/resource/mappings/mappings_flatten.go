@@ -1,4 +1,4 @@
-package resource
+package mappings
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
-func flattenAssignmentCodeForField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
+func FlattenAssignmentCodeForField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition) (*string, error) {
 	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
 	// the flatten function, which in turn needs to check if `Foo` is nil (and return
 	// whatever it needs too)

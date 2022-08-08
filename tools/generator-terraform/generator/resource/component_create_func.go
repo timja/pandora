@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/pandora/tools/generator-terraform/generator/models"
-
+	"github.com/hashicorp/pandora/tools/generator-terraform/generator/resource/mappings"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
@@ -187,7 +187,7 @@ func (h createFunctionComponents) payloadDefinition() (*string, error) {
 }
 
 func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
-	mappings := make([]string, 0)
+	lines := make([]string, 0)
 
 	// ensure these are output alphabetically for consistency purposes across re-generations
 	orderedFieldNames := make([]string, 0)
@@ -203,16 +203,16 @@ func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
 		}
 
 		assignmentVariable := fmt.Sprintf("payload.%s", *tfField.Mappings.SdkPathForCreate)
-		codeForMapping, err := expandAssignmentCodeForCreateField(assignmentVariable, tfFieldName, tfField, h.topLevelModel, h.models)
+		codeForMapping, err := mappings.ExpandAssignmentCodeForField(assignmentVariable, tfFieldName, tfField, *tfField.Mappings.SdkPathForCreate)
 		if err != nil {
 			return nil, fmt.Errorf("building expand assignment code for field %q: %+v", tfFieldName, err)
 		}
 
-		mappings = append(mappings, *codeForMapping)
+		lines = append(lines, *codeForMapping)
 	}
 
-	sort.Strings(mappings)
-	output := strings.Join(mappings, "\n")
+	sort.Strings(lines)
+	output := strings.Join(lines, "\n")
 	return &output, nil
 }
 
