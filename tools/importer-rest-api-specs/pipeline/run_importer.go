@@ -34,7 +34,7 @@ func runImporter(input RunInput, generationData []discovery.ServiceInput, swagge
 
 			// generate the schema
 			logger.Trace(fmt.Sprintf("generating Terraform Details for Service %q / Version %q", v.ServiceName, v.ApiVersion))
-			terraformDetails, err := task.generateTerraformDetails(v, data, logger.Named("TerraformDetails"))
+			data, err = task.generateTerraformDetails(v, data, logger.Named("TerraformDetails"))
 			if err != nil {
 				logger.Error(fmt.Sprintf("generating Terraform Details for Service %q / Version %q: %+v", v.ServiceName, v.ApiVersion, err))
 				wg.Done()
@@ -42,17 +42,17 @@ func runImporter(input RunInput, generationData []discovery.ServiceInput, swagge
 				return
 			}
 			// TODO: stuff n things @stephybun
-			log.Printf("Got Stuff: %+v", terraformDetails)
+			//log.Printf("Got Stuff: %+v", data.ResourcesterraformDetails)
 
 			// build the tests
-			logger.Trace(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q", v.ServiceName, v.ApiVersion))
-			terraformDetails, err = task.generateTerraformTests(v, *terraformDetails, logger.Named("TerraformTests"))
-			if err != nil {
-				logger.Error(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q: %+v", v.ServiceName, v.ApiVersion, err))
-				wg.Done()
-				os.Exit(1)
-				return
-			}
+			//logger.Trace(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q", v.ServiceName, v.ApiVersion))
+			//terraformDetails, err := task.generateTerraformTests(v, *terraformDetails, logger.Named("TerraformTests"))
+			//if err != nil {
+			//	logger.Error(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q: %+v", v.ServiceName, v.ApiVersion, err))
+			//	wg.Done()
+			//	os.Exit(1)
+			//	return
+			//}
 
 			logger.Trace("Task: Applying Overrides from Existing Data..")
 			data, err = task.applyOverridesFromExistingData(*data, input.DataApiEndpoint, logger)
