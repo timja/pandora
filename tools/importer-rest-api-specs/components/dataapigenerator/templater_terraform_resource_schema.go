@@ -3,6 +3,7 @@ package dataapigenerator
 import (
 	"fmt"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
+	"log"
 )
 
 func codeForTerraformSchemaDefinition(terraformNamespace string, details resourcemanager.TerraformResourceDetails) string {
@@ -14,15 +15,39 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 	// TODO: the main schema name is available in details.SchemaModelName
 
 	// TODO: output the real schema
-	//log.Printf("[DEBUG] Details: %+v", details)
-	//log.Printf("[DEBUG] Schema for %s: %+v", details.SchemaModelName, details.SchemaModels)
+
+	schema := ""
+	for _, v := range details.SchemaModels {
+		for field, def := range v.Fields {
+			schema += fmt.Sprintf("\t[HclName(\"%s\")]\n", field)
+
+			if def.ForceNew {
+				schema += fmt.Sprintf("\t[ForceNew]\n")
+			}
+			if def.Required {
+				schema += fmt.Sprintf("\t[Required]\n")
+			}
+			if def.Computed {
+				schema += fmt.Sprintf("\t[Computed]\n")
+			}
+			if def.Optional {
+				schema += fmt.Sprintf("\t[Optional]\n")
+			}
+			if def.ObjectDefinition.ReferenceName != nil {
+				schema += fmt.Sprintf("\tpublic %s %s\n", def.ObjectDefinition.Type, *def.ObjectDefinition.ReferenceName)
+			}
+			schema += fmt.Sprintf("\n")
+		}
+	}
+	log.Print(schema)
+
 	return fmt.Sprintf(`using Pandora.Definitions.Attributes;
 
 namespace %[1]s;
 
 public class %[2]sResourceSchema
 {
-	// TODO: populate with a real schema hi steve
+	// TODO: populate with a real schema
 
     [HclName("location")]
     [ForceNew]
@@ -43,6 +68,8 @@ public class %[2]sResourceSchema
 	[ForceNew]
     public string HostId { get; set; }
 
+%s
+
 }
-`, terraformNamespace, details.ResourceName)
+`, terraformNamespace, details.ResourceName, schema)
 }
