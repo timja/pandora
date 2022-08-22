@@ -44,9 +44,9 @@ func runImporter(input RunInput, generationData []discovery.ServiceInput, swagge
 			// TODO: stuff n things @stephybun
 			//log.Printf("Got Stuff: %+v", data.ResourcesterraformDetails)
 
-			// build the tests
+			//build the tests
 			//logger.Trace(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q", v.ServiceName, v.ApiVersion))
-			//terraformDetails, err := task.generateTerraformTests(v, *terraformDetails, logger.Named("TerraformTests"))
+			//terraformDetails, err = task.generateTerraformTests(v, *terraformDetails, logger.Named("TerraformTests"))
 			//if err != nil {
 			//	logger.Error(fmt.Sprintf("generating Terraform Tests for Service %q / Version %q: %+v", v.ServiceName, v.ApiVersion, err))
 			//	wg.Done()
