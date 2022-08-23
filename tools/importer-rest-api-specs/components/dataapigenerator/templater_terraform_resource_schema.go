@@ -19,6 +19,12 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 	// TODO: output the real schema
 
 	schema := ""
+	className := ""
+	if details.DisplayName != "" {
+		className = fmt.Sprintf("%sResourceSchema", details.ResourceName)
+	} else {
+		className = fmt.Sprintf("%sSchema", details.SchemaModelName)
+	}
 	for _, v := range details.SchemaModels {
 		for field, def := range v.Fields {
 			// TODO - refactor all this into some form of "cleanup" function(s)
@@ -67,6 +73,10 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 				fieldType = "int"
 			}
 
+			if strings.EqualFold(fieldType, "boolean") {
+				fieldType = "bool"
+			}
+
 			schema += fmt.Sprintf("\t[HclName(\"%s\")]\n", field)
 
 			if def.ForceNew {
@@ -82,7 +92,7 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 				schema += fmt.Sprintf("\t[Optional]\n")
 			}
 			if def.ObjectDefinition.ReferenceName != nil {
-				schema += fmt.Sprintf("\tpublic %s %s %s\n", fieldType, ref, operations)
+				schema += fmt.Sprintf("\tpublic %s %s %s\n", fmt.Sprintf("%sSchema", fieldType), ref, operations)
 			} else {
 				schema += fmt.Sprintf("\tpublic %s %s %s\n", fieldType, cleanup.NormalizeName(field), operations)
 			}
@@ -96,13 +106,13 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 
 namespace %[1]s;
 
-public class %[2]sResourceSchema
+public class %[2]s
 {
 
 %s
 
 }
-`, terraformNamespace, details.ResourceName, schema)
+`, terraformNamespace, className, schema)
 }
 
 //[HclName("location")]

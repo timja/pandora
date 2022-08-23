@@ -71,6 +71,15 @@ func (s Generator) generateTerraformDefinitions(apiVersion models.AzureApiDefini
 				return fmt.Errorf("generating Terraform Resource Tests for %q: %+v", label, err)
 			}
 		}
+
+		for label, details := range resource.Terraform.Schemas {
+			nestedSchemaFileName := path.Join(s.workingDirectoryForTerraform, fmt.Sprintf("%s-Resource-Schema.cs", details.SchemaModelName))
+			s.logger.Trace(fmt.Sprintf("Generating Resource Schema into %q", nestedSchemaFileName))
+			nestedSchemaCode := codeForTerraformSchemaDefinition(s.namespaceForTerraform, details)
+			if err := writeToFile(nestedSchemaFileName, nestedSchemaCode); err != nil {
+				return fmt.Errorf("generating Terraform Resource Schema for %q: %+v", label, err)
+			}
+		}
 	}
 
 	return nil

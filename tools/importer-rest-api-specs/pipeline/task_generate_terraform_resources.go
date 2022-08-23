@@ -30,6 +30,8 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 			// Seem to only be the ones that already have a .hcl config
 			var terraformDetails resourcemanager.TerraformDetails
 
+			nestedModels := make([]string, 0)
+
 			for k, v := range t.Resources {
 				// This is the Terraform name of the resource i.e. virtual_machine - why does this need to be a map?
 				// We need to add to this map any sub-schemas we find so their classes can also be generated
@@ -39,6 +41,8 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 				if err != nil {
 					return nil, err
 				}
+
+				nestedModels = findAllNestedModelsForResource(model, resource)
 
 				// Writing all of this info into an empty TerraformDetails struct for this particular resource
 				v.SchemaModelName = k
@@ -55,6 +59,18 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 				}
 			}
 
+			terraformDetails.Schemas = map[string]resourcemanager.TerraformResourceDetails{}
+			for _, v := range nestedModels {
+				nestedModel, err := b.BuildNestedModelDefinition(v, logger)
+				if err != nil {
+					continue
+				}
+				terraformDetails.Schemas[v] = resourcemanager.TerraformResourceDetails{
+					SchemaModelName: v,
+					SchemaModels:    map[string]resourcemanager.TerraformSchemaModelDefinition{v: *nestedModel},
+				}
+			}
+
 			// Adding the terraformDetails to the relevant resource, keeping the existing info on constants, models etc.
 			// This feels unpleasantly hacky
 			temp := resource
@@ -65,10 +81,53 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 			} else {
 				apiResource[key] = temp
 			}
+
 		}
+
 	}
 
 	data.Resources = apiResource
 
 	return data, nil
+}
+
+func findAllNestedModelsForResource(model *resourcemanager.TerraformSchemaModelDefinition, resource models.AzureApiResource) []string {
+	temp := make([]string, 0)
+
+	for _, m := range model.Fields {
+		if m.ObjectDefinition.ReferenceName != nil {
+			temp = append(temp, *m.ObjectDefinition.ReferenceName)
+		}
+	}
+
+	// This needs to be more clever - sub-nested models have a hierarchy to walk to get to
+	//for _, i := range resource.Models {
+	//	for _, v := range i.Fields {
+	//		if obj := v.ObjectDefinition; obj != nil && obj.ReferenceName != nil {
+	//			temp = append(temp, *obj.ReferenceName)
+	//		}
+	//	}
+	//}
+
+	uniqMap := make(map[string]struct{})
+	for _, v := range temp {
+		uniqMap[v] = struct{}{}
+	}
+
+	nestedModels := make([]string, 0, len(uniqMap))
+	for v := range uniqMap {
+		nestedModels = append(nestedModels, v)
+	}
+
+	return nestedModels
+}
+
+func findNestedModelsForModel(input models.ModelDetails) []string {
+	result := make([]string, 0)
+	for _, v := range input.Fields {
+		if obj := v.ObjectDefinition; obj != nil && obj.ReferenceName != nil {
+			result = append(result, *obj.ReferenceName)
+		}
+	}
+	return result
 }
