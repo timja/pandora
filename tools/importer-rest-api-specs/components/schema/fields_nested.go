@@ -78,7 +78,6 @@ func (b Builder) identifyFieldsWithinPropertiesBlock(input operationPayloads, re
 			if hasRead {
 				//typedModelName = b.determineNameForSchemaField(*readPropertiesModel, k)
 				typedModelName = updateFieldName(k, b, readPropertiesModel, resource)
-				//typedModelName = updateFieldNameModel(k, b, readPropertiesModel, resource)
 			} else if hasCreate {
 				typedModelName = updateFieldName(k, b, createPropertiesModel, resource)
 				//typedModelName = b.determineNameForSchemaField(*createPropertiesModel, k)
