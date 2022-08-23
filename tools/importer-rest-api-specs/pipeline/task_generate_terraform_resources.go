@@ -32,6 +32,7 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 
 			for k, v := range t.Resources {
 				// This is the Terraform name of the resource i.e. virtual_machine - why does this need to be a map?
+				// We need to add to this map any sub-schemas we find so their classes can also be generated
 				logger.Info(fmt.Sprintf("Building Schema for %s", k))
 
 				model, err := b.Build(v, logger)
