@@ -34,6 +34,10 @@ type TerraformDetails struct {
 	// Resources is a key (Resource Label) value (TerraformResourceDetails) pair of
 	// metadata about the Terraform Resources which should be generated.
 	Resources map[string]TerraformResourceDetails `json:"resources"`
+
+	// Schemas is a Collection of nested model Schemas used by the Resources that should be generated
+	// This borrows the resouce details for expedience, but should probably be a new type
+	Schemas map[string]TerraformResourceDetails `json:"modelSchemas"`
 }
 
 type TerraformDataSourceDetails struct {

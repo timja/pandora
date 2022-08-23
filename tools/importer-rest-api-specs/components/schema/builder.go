@@ -93,6 +93,40 @@ func (b Builder) Build(input resourcemanager.TerraformResourceDetails, logger hc
 	}, nil
 }
 
+func (b Builder) BuildNestedModelDefinition(nestedModelName string, logger hclog.Logger) (*resourcemanager.TerraformSchemaModelDefinition, error) {
+	out := make(map[string]resourcemanager.TerraformSchemaFieldDefinition, 0)
+	if model, ok := b.models[nestedModelName]; ok {
+		for k, v := range model.Fields {
+			// static for now, work it out later :see_no_evil:
+			isComputed := false
+			isForceNew := false
+			isRequired := false
+			isOptional := false
+
+			definition := resourcemanager.TerraformSchemaFieldDefinition{
+				Required: isRequired,
+				ForceNew: isForceNew,
+				Optional: isOptional,
+				Computed: isComputed,
+			}
+			logger.Debug("building nested schema model fields for %q", nestedModelName)
+			fieldObjectDefinition, err := convertToFieldObjectDefinition(v.ObjectDefinition)
+			if err != nil {
+				return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
+			}
+			definition.ObjectDefinition = *fieldObjectDefinition
+
+			out[k] = definition
+		}
+	} else {
+		logger.Error("could not build nested schema model fields for %q, not found!", nestedModelName)
+	}
+
+	return &resourcemanager.TerraformSchemaModelDefinition{
+		Fields: out,
+	}, nil
+}
+
 func (b Builder) findCreateUpdateReadPayloads(input resourcemanager.TerraformResourceDetails) *operationPayloads {
 	out := operationPayloads{}
 
