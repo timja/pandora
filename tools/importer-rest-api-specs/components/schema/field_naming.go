@@ -116,7 +116,15 @@ type fieldNameFlattenListReferenceIds struct{}
 
 func (fieldNameFlattenListReferenceIds) updatedNameForField(fieldName string, input *Builder, model *resourcemanager.ModelDetails, _ *resourcemanager.TerraformResourceDetails) (*string, error) {
 	if model.Fields[fieldName].ObjectDefinition.Type == resourcemanager.ListApiObjectDefinitionType {
-		model, ok := input.models[*model.Fields[fieldName].ObjectDefinition.ReferenceName]
+		modelName := ""
+		if model.Fields[fieldName].ObjectDefinition.ReferenceName != nil {
+			modelName = *model.Fields[fieldName].ObjectDefinition.ReferenceName
+		} else if model.Fields[fieldName].ObjectDefinition.NestedItem.ReferenceName != nil {
+			modelName = *model.Fields[fieldName].ObjectDefinition.NestedItem.ReferenceName
+		} else {
+			return nil, nil
+		}
+		model, ok := input.models[modelName]
 		if ok {
 			if len(model.Fields) == 1 {
 				// TODO Do we really need to check whether the Id is a reference?

@@ -11,11 +11,11 @@ var apiObjectDefinitionTypesToFieldObjectDefinitionTypes = map[resourcemanager.A
 	//resourcemanager.CsvApiObjectDefinitionType:  resourcemanager.TerraformSchemaFieldTypeCsv, // TODO: implement
 	resourcemanager.DateTimeApiObjectDefinitionType: resourcemanager.TerraformSchemaFieldTypeDateTime,
 	//resourcemanager.DictionaryApiObjectDefinitionType:  resourcemanager.TerraformSchemaFieldTypeDictionary, // TODO: implement
-	resourcemanager.IntegerApiObjectDefinitionType: resourcemanager.TerraformSchemaFieldTypeInteger,
-	resourcemanager.FloatApiObjectDefinitionType:   resourcemanager.TerraformSchemaFieldTypeFloat,
-	resourcemanager.ListApiObjectDefinitionType:    resourcemanager.TerraformSchemaFieldTypeList,
-	//resourcemanager.RawFileApiObjectDefinitionType:  resourcemanager.TerraformSchemaFieldTypeRawFile, // TODO: implement
-	//resourcemanager.RawObjectApiObjectDefinitionType:  resourcemanager.TerraformSchemaFieldTypeRawObject, // TODO: implement
+	resourcemanager.IntegerApiObjectDefinitionType:   resourcemanager.TerraformSchemaFieldTypeInteger,
+	resourcemanager.FloatApiObjectDefinitionType:     resourcemanager.TerraformSchemaFieldTypeFloat,
+	resourcemanager.ListApiObjectDefinitionType:      resourcemanager.TerraformSchemaFieldTypeList,
+	resourcemanager.RawFileApiObjectDefinitionType:   resourcemanager.TerraformSchemaFieldTypeRawFile, // TODO: implement
+	resourcemanager.RawObjectApiObjectDefinitionType: resourcemanager.TerraformSchemaFieldTypeRawObject,
 	resourcemanager.ReferenceApiObjectDefinitionType: resourcemanager.TerraformSchemaFieldTypeReference,
 	resourcemanager.StringApiObjectDefinitionType:    resourcemanager.TerraformSchemaFieldTypeString,
 

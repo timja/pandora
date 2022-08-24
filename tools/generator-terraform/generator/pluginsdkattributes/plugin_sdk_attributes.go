@@ -174,7 +174,7 @@ func (h PluginSdkAttributesHelpers) attributesForObjectDefinition(input resource
 			attributes = append(attributes, "Type: pluginsdk.TypeString")
 		}
 
-	case resourcemanager.TerraformSchemaFieldTypeReference:
+	case resourcemanager.TerraformSchemaFieldTypeReference, resourcemanager.TerraformSchemaFieldTypeRawObject:
 		{
 			if input.ReferenceName == nil {
 				return nil, fmt.Errorf("missing name for reference")

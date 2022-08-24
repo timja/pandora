@@ -30,6 +30,7 @@ func (b Builder) identifyFieldsWithinPropertiesBlock(input operationPayloads, re
 	out := make(map[string]resourcemanager.TerraformSchemaFieldDefinition, 0)
 	if readPropertiesModel != nil {
 		for k := range allFields {
+			fieldIsEnum := false
 			var readField *resourcemanager.FieldDetails
 			hasRead := false
 			if readPropertiesModel != nil {
@@ -101,10 +102,17 @@ func (b Builder) identifyFieldsWithinPropertiesBlock(input operationPayloads, re
 				// TODO: also need to add the mappings & any validation
 			}
 
+			if readField.ObjectDefinition.ReferenceName != nil {
+				_, fieldIsEnum = b.constants[*readField.ObjectDefinition.ReferenceName]
+			}
+
 			if hasRead {
 				fieldObjectDefinition, err := convertToFieldObjectDefinition(readField.ObjectDefinition)
 				if err != nil {
 					return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
+				}
+				if fieldIsEnum {
+					fieldObjectDefinition.Type = "Enum"
 				}
 				definition.ObjectDefinition = *fieldObjectDefinition
 			} else if hasCreate {
@@ -112,11 +120,17 @@ func (b Builder) identifyFieldsWithinPropertiesBlock(input operationPayloads, re
 				if err != nil {
 					return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
 				}
+				if fieldIsEnum {
+					fieldObjectDefinition.Type = "Enum"
+				}
 				definition.ObjectDefinition = *fieldObjectDefinition
 			} else if hasUpdate {
 				fieldObjectDefinition, err := convertToFieldObjectDefinition(updateField.ObjectDefinition)
 				if err != nil {
 					return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
+				}
+				if fieldIsEnum {
+					fieldObjectDefinition.Type = "Enum"
 				}
 				definition.ObjectDefinition = *fieldObjectDefinition
 			}

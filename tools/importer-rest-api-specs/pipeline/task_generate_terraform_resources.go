@@ -2,6 +2,9 @@ package pipeline
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/discovery"
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/schema"
@@ -29,20 +32,22 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 			// We only generate the schema fields for resources that have existing TerraformDetails
 			// Seem to only be the ones that already have a .hcl config
 			var terraformDetails resourcemanager.TerraformDetails
+			var terraformResourceDetails resourcemanager.TerraformResourceDetails
 
 			nestedModels := make([]string, 0)
+			referencedEnums := make([]string, 0)
 
 			for k, v := range t.Resources {
 				// This is the Terraform name of the resource i.e. virtual_machine - why does this need to be a map?
 				// We need to add to this map any sub-schemas we find so their classes can also be generated
 				logger.Info(fmt.Sprintf("Building Schema for %s", k))
-
+				terraformResourceDetails = v
 				model, err := b.Build(v, logger)
 				if err != nil {
 					return nil, err
 				}
 
-				nestedModels = findAllNestedModelsForResource(model, resource)
+				nestedModels, referencedEnums = findAllNestedModelsForResource(model, resource)
 
 				// Writing all of this info into an empty TerraformDetails struct for this particular resource
 				v.SchemaModelName = k
@@ -61,13 +66,20 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 
 			terraformDetails.Schemas = map[string]resourcemanager.TerraformResourceDetails{}
 			for _, v := range nestedModels {
-				nestedModel, err := b.BuildNestedModelDefinition(v, logger)
-				if err != nil {
+				nestedModel, err := b.BuildNestedModelDefinition(v, terraformResourceDetails, logger)
+				if err != nil || nestedModel == nil {
 					continue
 				}
 				terraformDetails.Schemas[v] = resourcemanager.TerraformResourceDetails{
 					SchemaModelName: v,
 					SchemaModels:    map[string]resourcemanager.TerraformSchemaModelDefinition{v: *nestedModel},
+				}
+			}
+
+			terraformDetails.Constants = map[string]resourcemanager.ConstantDetails{}
+			for _, v := range referencedEnums {
+				if c, ok := resource.Constants[v]; ok {
+					terraformDetails.Constants[v] = c
 				}
 			}
 
@@ -91,43 +103,122 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 	return data, nil
 }
 
-func findAllNestedModelsForResource(model *resourcemanager.TerraformSchemaModelDefinition, resource models.AzureApiResource) []string {
-	temp := make([]string, 0)
+func findAllNestedModelsForResource(model *resourcemanager.TerraformSchemaModelDefinition, resource models.AzureApiResource) ([]string, []string) {
+	foundModels := make([]string, 0)
+	foundEnums := make([]string, 0)
 
 	for _, m := range model.Fields {
-		if m.ObjectDefinition.ReferenceName != nil {
-			temp = append(temp, *m.ObjectDefinition.ReferenceName)
+		if ref := m.ObjectDefinition.ReferenceName; ref != nil {
+			if strings.EqualFold(*ref, "subresource") {
+				// subresources are remote IDs, so should be references to the IDs not models here
+				continue
+			}
+			if _, ok := resource.Models[*ref]; ok {
+				// Check it's actually a model, not a reference to an enum
+				foundModels = append(foundModels, *ref)
+				continue
+			}
+			if _, ok := resource.Constants[*ref]; ok {
+				foundEnums = append(foundEnums, *ref)
+				continue
+			}
+		}
+		if m.ObjectDefinition.NestedObject != nil {
+			if ref := m.ObjectDefinition.NestedObject.ReferenceName; ref != nil {
+				if strings.EqualFold(*ref, "subresource") {
+					// subresources are remote IDs, so should be references to the IDs not models here
+					continue
+				}
+				if _, ok := resource.Models[*ref]; ok {
+					// Check it's actually a model, not a reference to an enum
+					foundModels = append(foundModels, *ref)
+					continue
+				}
+				if _, ok := resource.Constants[*ref]; ok {
+					foundEnums = append(foundEnums, *ref)
+					continue
+				}
+			}
 		}
 	}
 
-	// This needs to be more clever - sub-nested models have a hierarchy to walk to get to
-	//for _, i := range resource.Models {
-	//	for _, v := range i.Fields {
-	//		if obj := v.ObjectDefinition; obj != nil && obj.ReferenceName != nil {
-	//			temp = append(temp, *obj.ReferenceName)
-	//		}
-	//	}
-	//}
+	// make the list unique
+	foundModels = dedupeList(foundModels)
+	foundEnums = dedupeList(foundEnums)
 
+	for _, v := range foundModels {
+		if m, ok := resource.Models[v]; ok {
+			for n, f := range m.Fields {
+				log.Printf("processing field %q for model %q", n, v)
+				if f.ObjectDefinition != nil && f.ObjectDefinition.ReferenceName != nil {
+					ref := *f.ObjectDefinition.ReferenceName
+					if _, constant := resource.Constants[ref]; constant {
+						if _, isConstant := resource.Constants[ref]; isConstant {
+							foundEnums = append(foundEnums, ref)
+						}
+						continue
+					}
+					foundModels, foundEnums = findNestedModelsForModel(ref, resource, foundModels, foundEnums)
+				} else if f.ObjectDefinition != nil && f.ObjectDefinition.NestedItem != nil && f.ObjectDefinition.NestedItem.ReferenceName != nil {
+					ref := *f.ObjectDefinition.NestedItem.ReferenceName
+					if _, constant := resource.Constants[ref]; constant {
+						if _, isConstant := resource.Constants[ref]; isConstant {
+							foundEnums = append(foundEnums, ref)
+						}
+						continue
+					}
+					foundModels, foundEnums = findNestedModelsForModel(ref, resource, foundModels, foundEnums)
+				}
+			}
+		}
+	}
+
+	return foundModels, foundEnums
+}
+
+func findNestedModelsForModel(model string, resource models.AzureApiResource, foundModels []string, foundEnums []string) ([]string, []string) {
+	newRef := ""
+	if m, ok := resource.Models[model]; ok {
+		foundModels = append(foundModels, model)
+		for _, v := range m.Fields {
+			if v.ObjectDefinition != nil && v.ObjectDefinition.ReferenceName != nil {
+				newRef = *v.ObjectDefinition.ReferenceName
+				if _, ok := resource.Models[newRef]; !ok {
+					if _, isConstant := resource.Constants[newRef]; isConstant {
+						foundEnums = append(foundEnums, newRef)
+					}
+					continue
+				}
+				foundModels = append(foundModels, newRef)
+			} else if v.ObjectDefinition.NestedItem != nil && v.ObjectDefinition.NestedItem.ReferenceName != nil {
+				newRef = *v.ObjectDefinition.NestedItem.ReferenceName
+				if _, ok := resource.Models[newRef]; !ok {
+					if _, isConstant := resource.Constants[newRef]; isConstant {
+						foundEnums = append(foundEnums, newRef)
+					}
+					continue
+				}
+				foundModels = append(foundModels, newRef)
+			}
+			if newRef != "" {
+				foundModels, foundEnums = findNestedModelsForModel(newRef, resource, foundModels, foundEnums)
+			}
+		}
+	}
+
+	return dedupeList(foundModels), dedupeList(foundEnums)
+}
+
+func dedupeList(input []string) []string {
 	uniqMap := make(map[string]struct{})
-	for _, v := range temp {
+	for _, v := range input {
 		uniqMap[v] = struct{}{}
 	}
 
-	nestedModels := make([]string, 0, len(uniqMap))
+	uniqList := make([]string, 0, len(uniqMap))
 	for v := range uniqMap {
-		nestedModels = append(nestedModels, v)
+		uniqList = append(uniqList, v)
 	}
 
-	return nestedModels
-}
-
-func findNestedModelsForModel(input models.ModelDetails) []string {
-	result := make([]string, 0)
-	for _, v := range input.Fields {
-		if obj := v.ObjectDefinition; obj != nil && obj.ReferenceName != nil {
-			result = append(result, *obj.ReferenceName)
-		}
-	}
-	return result
+	return uniqList
 }

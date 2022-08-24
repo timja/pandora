@@ -73,10 +73,19 @@ func (s Generator) generateTerraformDefinitions(apiVersion models.AzureApiDefini
 		}
 
 		for label, details := range resource.Terraform.Schemas {
-			nestedSchemaFileName := path.Join(s.workingDirectoryForTerraform, fmt.Sprintf("%s-Resource-Schema.cs", details.SchemaModelName))
-			s.logger.Trace(fmt.Sprintf("Generating Resource Schema into %q", nestedSchemaFileName))
+			nestedSchemaFileName := path.Join(s.workingDirectoryForTerraform, fmt.Sprintf("%s-Model-Schema.cs", details.SchemaModelName))
+			s.logger.Trace(fmt.Sprintf("Generating Model Schema into %q", nestedSchemaFileName))
 			nestedSchemaCode := codeForTerraformSchemaDefinition(s.namespaceForTerraform, details)
 			if err := writeToFile(nestedSchemaFileName, nestedSchemaCode); err != nil {
+				return fmt.Errorf("generating Terraform Resource Schema for %q: %+v", label, err)
+			}
+		}
+
+		for label, details := range resource.Terraform.Constants {
+			enumFileName := path.Join(s.workingDirectoryForTerraform, fmt.Sprintf("%s-Enums-Schema.cs", label))
+			s.logger.Trace(fmt.Sprintf("Generating Possoble Values into %q", enumFileName))
+			enumCode, _ := codeForTerraformConstant(s.namespaceForTerraform, label, details) // TODO - handle the error here
+			if err := writeToFile(enumFileName, *enumCode); err != nil {
 				return fmt.Errorf("generating Terraform Resource Schema for %q: %+v", label, err)
 			}
 		}

@@ -93,33 +93,51 @@ func (b Builder) Build(input resourcemanager.TerraformResourceDetails, logger hc
 	}, nil
 }
 
-func (b Builder) BuildNestedModelDefinition(nestedModelName string, logger hclog.Logger) (*resourcemanager.TerraformSchemaModelDefinition, error) {
+func (b Builder) BuildNestedModelDefinition(nestedModelName string, details resourcemanager.TerraformResourceDetails, logger hclog.Logger) (*resourcemanager.TerraformSchemaModelDefinition, error) {
 	out := make(map[string]resourcemanager.TerraformSchemaFieldDefinition, 0)
 	if model, ok := b.models[nestedModelName]; ok {
-		for k, v := range model.Fields {
-			// static for now, work it out later :see_no_evil:
-			isComputed := false
-			isForceNew := false
-			isRequired := false
-			isOptional := false
+		if len(model.Fields) > 0 {
+			for k, v := range model.Fields {
+				if v.ObjectDefinition.Type == "SystemData" {
+					// TODO - Probably a better place to do this?
+					continue
+				}
 
-			definition := resourcemanager.TerraformSchemaFieldDefinition{
-				Required: isRequired,
-				ForceNew: isForceNew,
-				Optional: isOptional,
-				Computed: isComputed,
-			}
-			logger.Debug("building nested schema model fields for %q", nestedModelName)
-			fieldObjectDefinition, err := convertToFieldObjectDefinition(v.ObjectDefinition)
-			if err != nil {
-				return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
-			}
-			definition.ObjectDefinition = *fieldObjectDefinition
+				isComputed := false // Can we work this out yet?
+				isForceNew := v.ForceNew
+				isRequired := v.Required
+				isOptional := v.Optional
 
-			out[k] = definition
+				definition := resourcemanager.TerraformSchemaFieldDefinition{
+					Required: isRequired,
+					ForceNew: isForceNew,
+					Optional: isOptional,
+					Computed: isComputed,
+				}
+				logger.Debug("building nested schema model fields for %q", nestedModelName)
+				fieldObjectDefinition, err := convertToFieldObjectDefinition(v.ObjectDefinition)
+				if err != nil {
+					return nil, fmt.Errorf("converting ObjectDefinition for field to a TerraformFieldObjectDefinition: %+v", err)
+				}
+				if ref := v.ObjectDefinition.ReferenceName; ref != nil {
+					if _, ok := b.constants[*ref]; ok {
+						fieldObjectDefinition.Type = "Enum"
+					}
+				}
+				if v.ObjectDefinition.NestedItem != nil {
+					if ref := v.ObjectDefinition.NestedItem.ReferenceName; ref != nil {
+						if _, ok := b.constants[*ref]; ok {
+							fieldObjectDefinition.NestedObject.Type = "Enum"
+						}
+					}
+				}
+				definition.ObjectDefinition = *fieldObjectDefinition
+				typedName := convertToSnakeCase(updateFieldName(k, b, &model, &details))
+				out[typedName] = definition
+			}
 		}
 	} else {
-		logger.Error("could not build nested schema model fields for %q, not found!", nestedModelName)
+		logger.Info(fmt.Sprintf("could not build nested schema model fields for %q, not found!", nestedModelName))
 	}
 
 	return &resourcemanager.TerraformSchemaModelDefinition{

@@ -38,6 +38,8 @@ type TerraformDetails struct {
 	// Schemas is a Collection of nested model Schemas used by the Resources that should be generated
 	// This borrows the resouce details for expedience, but should probably be a new type
 	Schemas map[string]TerraformResourceDetails `json:"modelSchemas"`
+
+	Constants map[string]ConstantDetails
 }
 
 type TerraformDataSourceDetails struct {
@@ -220,6 +222,8 @@ const (
 	TerraformSchemaFieldTypeReference TerraformSchemaFieldType = "Reference"
 	TerraformSchemaFieldTypeSet       TerraformSchemaFieldType = "Set"
 	TerraformSchemaFieldTypeString    TerraformSchemaFieldType = "String"
+	TerraformSchemaFieldTypeRawObject TerraformSchemaFieldType = "Object"
+	TerraformSchemaFieldTypeRawFile   TerraformSchemaFieldType = "File"
 
 	TerraformSchemaFieldTypeEdgeZone                      TerraformSchemaFieldType = "EdgeZone"
 	TerraformSchemaFieldTypeIdentitySystemAssigned        TerraformSchemaFieldType = "IdentitySystemAssigned"
