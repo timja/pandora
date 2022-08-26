@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
-func convertToSnakeCase(input string) string {
+func ConvertToSnakeCase(input string) string {
 	if v, ok := schemaFieldNameOverrides[strings.ToLower(input)]; ok {
 		return v
 	}

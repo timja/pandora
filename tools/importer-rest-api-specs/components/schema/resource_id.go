@@ -29,7 +29,7 @@ func (b Builder) identityTopLevelFieldsWithinResourceID(input resourcemanager.Re
 				}
 			}
 			if parentResourceIdName != "" {
-				parentResourceSchemaField := convertToSnakeCase(parentResourceIdName)
+				parentResourceSchemaField := ConvertToSnakeCase(parentResourceIdName)
 				out[parentResourceSchemaField] = resourcemanager.TerraformSchemaFieldDefinition{
 					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
 						Type:          resourcemanager.TerraformSchemaFieldTypeReference,

@@ -87,7 +87,7 @@ func (b Builder) identifyFieldsWithinPropertiesBlock(input operationPayloads, re
 				//typedModelName = b.determineNameForSchemaField(*updatePropertiesModel, k)
 			}
 
-			schemaFieldName := convertToSnakeCase(typedModelName)
+			schemaFieldName := ConvertToSnakeCase(typedModelName)
 			log.Printf("[DEBUG] Properties Field %q would be output as %q / %q", k, typedModelName, schemaFieldName)
 
 			definition := resourcemanager.TerraformSchemaFieldDefinition{
