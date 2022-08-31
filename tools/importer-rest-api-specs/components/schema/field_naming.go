@@ -165,6 +165,8 @@ func (fieldNameFlattenListReferenceIds) updatedNameForField(fieldName string, in
 
 //TODO: if the field is named `id` within a block rename it to `{block}_id`
 
-//TODO: fields containing discriminators
-//TODO: if the model contains a single model, eliminate the wrapper model
+//TODO: fields containing discriminators - for now we should skip the resource/raise an error if there's a discriminator involved
+//TODO: when the field `properties` is a reference to a model, move fields from the 'properties' model up into the parent model
+//TODO: handling the top level field `sku`
 //TODO: if there's multiple fields with the same prefix, should we put these into a block?
+//TODO: maybe done? if the model contains a single model, eliminate the wrapper model
