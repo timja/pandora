@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/discovery"
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/schema"
-	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/testattributes"
+	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/testattributes"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
@@ -21,7 +21,7 @@ func (t pipelineTask) generateTerraformTests(input discovery.ServiceInput, detai
 		}
 		logger.Trace(fmt.Sprintf("Generating Tests for %q", resourceName))
 
-		basicTest, err := generateBasicTestConfig(resourceDetails)
+		basicTest, err := generateTestConfig(resourceDetails, true)
 		if err != nil {
 			return nil, err
 		}
@@ -36,17 +36,28 @@ func (t pipelineTask) generateTerraformTests(input discovery.ServiceInput, detai
 		if importTest != nil {
 			resourceDetails.Tests.RequiresImportConfiguration = *importTest
 		}
+
+		// todo check that there not attributes are required before calling this
+		completeTest, err := generateTestConfig(resourceDetails, false)
+		if err != nil {
+			return nil, err
+		}
+		if basicTest != nil {
+			resourceDetails.Tests.CompleteConfiguration = completeTest
+		}
+
+		// todo figure out ids that could be resources and have those added to the template
 	}
 
 	return &details, nil
 }
 
-func generateBasicTestConfig(input resourcemanager.TerraformResourceDetails) (*string, error) {
+func generateTestConfig(input resourcemanager.TerraformResourceDetails, requiredOnly bool) (*string, error) {
 	f := hclwrite.NewEmptyFile()
 	h := testattributes.TestAttributesHelpers{
 		SchemaModels: input.SchemaModels,
 	}
-	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body(), true); err != nil {
+	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body(), requiredOnly); err != nil {
 		return nil, err
 	}
 
