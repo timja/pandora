@@ -132,7 +132,7 @@ func (b Builder) BuildNestedModelDefinition(nestedModelName string, details reso
 					}
 				}
 				definition.ObjectDefinition = *fieldObjectDefinition
-				typedName := convertToSnakeCase(updateFieldName(k, b, &model, &details))
+				typedName := ConvertToSnakeCase(updateFieldName(k, b, &model, &details))
 				out[typedName] = definition
 			}
 		}

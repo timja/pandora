@@ -43,11 +43,11 @@ func (h TestAttributesHelpers) GetAttributesForTests(input resourcemanager.Terra
 	}
 
 	for _, fieldName := range sortedNames {
-		hclName := input.Fields[fieldName].HclName
-		if hclName == "" {
-			return fmt.Errorf("internal-error: hclName was empty for %q", fieldName)
-		}
-		if err := h.codeForTestAttribute(input.Fields[fieldName].ObjectDefinition, hclName, requiredOnly, hclBody); err != nil {
+		//hclName := input.Fields[fieldName].HclName
+		//if hclName == "" {
+		//	return fmt.Errorf("internal-error: hclName was empty for %q", fieldName)
+		//}
+		if err := h.codeForTestAttribute(input.Fields[fieldName].ObjectDefinition, fieldName, requiredOnly, hclBody); err != nil {
 			return err
 		}
 	}
@@ -119,6 +119,7 @@ func (h TestAttributesHelpers) codeForTestAttribute(input resourcemanager.Terraf
 		}
 		reference, ok := h.SchemaModels[*input.ReferenceName]
 		if !ok {
+			return fmt.Errorf("%+v", input)
 			return fmt.Errorf("schema model %q was not found", *input.ReferenceName)
 		}
 		if err := h.GetAttributesForTests(reference, *hclBody.AppendNewBlock(hclName, nil).Body(), requiredOnly); err != nil {

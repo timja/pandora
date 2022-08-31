@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"fmt"
+	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/models"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/hcl/v2"
@@ -12,44 +13,45 @@ import (
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
-func (t pipelineTask) generateTerraformTests(input discovery.ServiceInput, details resourcemanager.TerraformDetails, logger hclog.Logger) (*resourcemanager.TerraformDetails, error) {
+func (t pipelineTask) generateTerraformTests(input discovery.ServiceInput, data *models.AzureApiDefinition, logger hclog.Logger) (*models.AzureApiDefinition, error) {
 	// TODO: @mbfrahry: go through and add the tests to each of the existing resources in details.Resources["blag"].Tests
 
-	for resourceName, resourceDetails := range details.Resources {
-		if !resourceDetails.Tests.Generate {
-			continue
-		}
-		logger.Trace(fmt.Sprintf("Generating Tests for %q", resourceName))
+	for _, resource := range data.Resources {
+		if t := resource.Terraform; t != nil {
+			for resourceName, resourceDetails := range t.Resources {
+				logger.Trace(fmt.Sprintf("Generating Tests for %q", resourceName))
 
-		basicTest, err := generateTestConfig(resourceDetails, true)
-		if err != nil {
-			return nil, err
-		}
-		if basicTest != nil {
-			resourceDetails.Tests.BasicConfiguration = *basicTest
-		}
+				basicTest, err := generateTestConfig(resourceDetails, true)
+				if err != nil {
+					return nil, err
+				}
+				if basicTest != nil {
+					resourceDetails.Tests.BasicConfiguration = *basicTest
+				}
 
-		importTest, err := generateImportTestConfig(resourceDetails)
-		if err != nil {
-			return nil, err
-		}
-		if importTest != nil {
-			resourceDetails.Tests.RequiresImportConfiguration = *importTest
-		}
+				importTest, err := generateImportTestConfig(resourceDetails)
+				if err != nil {
+					return nil, err
+				}
+				if importTest != nil {
+					resourceDetails.Tests.RequiresImportConfiguration = *importTest
+				}
 
-		// todo check that there not attributes are required before calling this
-		completeTest, err := generateTestConfig(resourceDetails, false)
-		if err != nil {
-			return nil, err
-		}
-		if basicTest != nil {
-			resourceDetails.Tests.CompleteConfiguration = completeTest
-		}
+				// todo check that there not attributes are required before calling this
+				completeTest, err := generateTestConfig(resourceDetails, false)
+				if err != nil {
+					return nil, err
+				}
+				if basicTest != nil {
+					resourceDetails.Tests.CompleteConfiguration = completeTest
+				}
 
-		// todo figure out ids that could be resources and have those added to the template
+				// todo figure out ids that could be resources and have those added to the template
+			}
+		}
 	}
 
-	return &details, nil
+	return data, nil
 }
 
 func generateTestConfig(input resourcemanager.TerraformResourceDetails, requiredOnly bool) (*string, error) {
