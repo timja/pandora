@@ -62,6 +62,9 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 				} else {
 					terraformDetails.Resources[k] = v
 				}
+
+				// Just copy Data Sources for now
+				terraformDetails.DataSources = t.DataSources
 			}
 
 			terraformDetails.Schemas = map[string]resourcemanager.TerraformResourceDetails{}
@@ -93,12 +96,13 @@ func (pipelineTask) generateTerraformDetails(input discovery.ServiceInput, data 
 			} else {
 				apiResource[key] = temp
 			}
-
 		}
-
 	}
 
-	data.Resources = apiResource
+	// merge the processed data back in
+	for k, v := range apiResource {
+		data.Resources[k] = v
+	}
 
 	return data, nil
 }

@@ -1,11 +1,10 @@
+using System.Collections.Generic;
 using Pandora.Definitions.Attributes;
 
 namespace Pandora.Definitions.ResourceManager.Resources.Terraform;
 
 public class ResourceGroupResourceSchema
 {
-    // TODO: populate with a real schema
-
     [HclName("location")]
     [ForceNew]
     [Required]
@@ -19,4 +18,6 @@ public class ResourceGroupResourceSchema
     [HclName("tags")]
     [Optional]
     public CustomTypes.Tags Tags { get; set; }
+
+
 }
