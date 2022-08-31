@@ -136,9 +136,9 @@ func codeForTerraformSchemaDefinition(terraformNamespace string, details resourc
 
 			if def.ObjectDefinition.ReferenceName != nil && !fieldIsId {
 				if fieldIsEnum {
-					schema += fmt.Sprintf("\tpublic %s %s %s\n", fmt.Sprintf("%sConstant?", ref), ref, operations)
+					schema += fmt.Sprintf("\tpublic %s %s %s\n", fmt.Sprintf("%sConstant?", ref), cleanup.NormalizeName(field), operations)
 				} else {
-					schema += fmt.Sprintf("\tpublic %s %s %s\n", fmt.Sprintf("%sSchema", fieldType), ref, operations)
+					schema += fmt.Sprintf("\tpublic %s %s %s\n", fmt.Sprintf("%sSchema", fieldType), cleanup.NormalizeName(field), operations)
 				}
 			} else {
 				schema += fmt.Sprintf("\tpublic %s %s %s\n", fieldType, cleanup.NormalizeName(field), operations)
