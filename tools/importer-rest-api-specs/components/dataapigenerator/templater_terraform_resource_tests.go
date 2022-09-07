@@ -28,7 +28,7 @@ public class %[2]sResourceTests : TerraformResourceTestDefinition
         %[4]s
     ".AsTerraformTestConfig();
     
-    public string? CompleteConfig => null;
+    public string? CompleteConfig => %[5]s;
     public string? TemplateConfig => @"
         resource 'azurerm_foo' 'bar' {
         }
@@ -36,5 +36,15 @@ public class %[2]sResourceTests : TerraformResourceTestDefinition
     
     public Dictionary<string, List<string>> OtherTests => new Dictionary<string, List<string>>();
 }
-`, terraformNamespace, details.ResourceName, details.Tests.BasicConfiguration, details.Tests.RequiresImportConfiguration)
+`, terraformNamespace, details.ResourceName, details.Tests.BasicConfiguration, details.Tests.RequiresImportConfiguration, addCompleteTestConfig(details.Tests.CompleteConfiguration))
+}
+
+func addCompleteTestConfig(input *string) string {
+	if input != nil {
+		return fmt.Sprintf(`@"
+%s
+	",AsTerraformTestConfig()`, *input)
+	}
+
+	return "null"
 }

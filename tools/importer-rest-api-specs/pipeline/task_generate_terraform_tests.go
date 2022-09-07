@@ -42,11 +42,17 @@ func (t pipelineTask) generateTerraformTests(input discovery.ServiceInput, data 
 				if err != nil {
 					return nil, err
 				}
-				if basicTest != nil {
+				if completeTest != nil {
 					resourceDetails.Tests.CompleteConfiguration = completeTest
 				}
 
 				// todo figure out ids that could be resources and have those added to the template
+
+				if t.Resources == nil {
+					t.Resources = map[string]resourcemanager.TerraformResourceDetails{resourceName: resourceDetails}
+				} else {
+					t.Resources[resourceName] = resourceDetails
+				}
 			}
 		}
 	}
@@ -59,16 +65,17 @@ func generateTestConfig(input resourcemanager.TerraformResourceDetails, required
 	h := testattributes.TestAttributesHelpers{
 		SchemaModels: input.SchemaModels,
 	}
-	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body(), requiredOnly); err != nil {
+
+	// todo don't hardcode azurerm
+	resourceHeader := fmt.Sprintf(`resource "azurerm_%s" "test"`, schema.ConvertToSnakeCase(input.ResourceName))
+
+	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body().AppendNewBlock(resourceHeader, nil).Body(), requiredOnly); err != nil {
 		return nil, err
 	}
 
-	// todo don't hardcode azurerm
 	output := fmt.Sprintf(`
-resource "azurerm_%[1]s" "test" {
-%[2]s
-}
-`, schema.ConvertToSnakeCase(input.ResourceName), f.Bytes())
+%s
+`, hclwrite.Format(f.Bytes()))
 	return &output, nil
 }
 
@@ -77,7 +84,11 @@ func generateImportTestConfig(input resourcemanager.TerraformResourceDetails) (*
 	h := testattributes.TestAttributesHelpers{
 		SchemaModels: input.SchemaModels,
 	}
-	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body(), true); err != nil {
+
+	// todo don't hardcode azurerm
+	resourceHeader := fmt.Sprintf(`resource "azurerm_%s" "import"`, schema.ConvertToSnakeCase(input.ResourceName))
+
+	if err := h.GetAttributesForTests(input.SchemaModels[input.SchemaModelName], *f.Body().AppendNewBlock(resourceHeader, nil).Body(), true); err != nil {
 		return nil, err
 	}
 
@@ -90,11 +101,8 @@ func generateImportTestConfig(input resourcemanager.TerraformResourceDetails) (*
 		})
 	}
 
-	// todo don't hardcode azurerm
 	output := fmt.Sprintf(`
-resource "azurerm_%[1]s" "import" {
-%[2]s
-}
-`, schema.ConvertToSnakeCase(input.ResourceName), f.Bytes())
+%s
+`, hclwrite.Format(f.Bytes()))
 	return &output, nil
 }
