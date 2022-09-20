@@ -5,16 +5,20 @@ import (
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/models"
 )
 
-func (d Differ) RemovedAttributeesFromExistingAPIDefinitions(existing models.AzureApiDefinition, parsed models.AzureApiDefinition) (models.AzureApiDefinition, error) {
-	var output models.AzureApiDefinition
+func (d Differ) RemovedAttributesFromExistingAPIDefinitions(existing models.AzureApiDefinition, parsed models.AzureApiDefinition) (DiffedAzureApiDefinition, error) {
+	output := DiffedAzureApiDefinition{
+		Resources: make(map[string]DiffedAzureApiResource, 0),
+	}
 	for resourceName, resource := range existing.Resources {
 		newResource, ok := parsed.Resources[resourceName]
 		if !ok {
 			return output, fmt.Errorf("unable to find %q resource in new api definition", resourceName)
 		}
 
+		diffedModels := DiffedAzureApiResource{
+			Models: make(map[string][]string, 0),
+		}
 		for oldModelName, oldModel := range resource.Models {
-			diffedModels := make(map[string]DiffedModelDetails)
 			newModel, ok := newResource.Models[oldModelName]
 			if !ok {
 				return output, fmt.Errorf("unable to find %q in %q new model definition", resourceName, resourceName)
@@ -37,8 +41,11 @@ func (d Differ) RemovedAttributeesFromExistingAPIDefinitions(existing models.Azu
 				}
 			}
 			if len(removedFields) > 0 {
-				diffedModels[oldModelName] = removedFields
+				diffedModels.Models[oldModelName] = removedFields
 			}
+		}
+		if len(diffedModels.Models) > 0 {
+			output.Resources[resourceName] = diffedModels
 		}
 	}
 

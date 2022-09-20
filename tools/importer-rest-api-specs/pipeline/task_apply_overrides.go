@@ -18,6 +18,18 @@ func (pipelineTask) applyOverridesFromExistingData(data models.AzureApiDefinitio
 			return nil, fmt.Errorf("retrieving data from Data API: %+v", err)
 		}
 
+		data.Resources["VirtualMachineScaleSets"].Models["VirtualMachineScaleSetUpdateNetworkProfile"] = models.ModelDetails{}
+		// delete(data.Resources["VirtualMachineScaleSets"].Models["VirtualMachineScaleSetUpdateNetworkProfile"].Fields, "NetworkApiVersion")
+
+		test, err := differ.RemovedAttributesFromExistingAPIDefinitions(*existingApiDefinitions, data)
+		if err != nil {
+			return nil, fmt.Errorf("finding removed attributes from existing API Definitions")
+		}
+
+		if len(test.Resources) > 0 {
+
+		}
+
 		logger.Trace("Applying Overrides from the Existing API Definitions to the Parsed Swagger Data..")
 		data, err = differ.ApplyFromExistingAPIDefinitions(*existingApiDefinitions, data)
 		if err != nil {
