@@ -2,6 +2,8 @@ package schema
 
 import (
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/components/helpers"
@@ -94,13 +96,15 @@ func (b Builder) Build(input resourcemanager.TerraformResourceDetails, logger hc
 
 				if blockRef, ok := blockHclNamesRefMap[field.HclName]; ok {
 					if blockRef != *objectDefinition.ReferenceName {
-						return nil, fmt.Errorf("found duplicate HCL name for block  %q: %+v", field.HclName, err)
+						//return nil, fmt.Errorf("found duplicate HCL name for block  %q: %+v", field.HclName, err)
 					}
 				}
 				blockHclNamesRefMap[field.HclName] = *objectDefinition.ReferenceName
 			}
 		}
 	}
+
+	schemaModels = b.findUnusedModels(input.SchemaModelName, schemaModels)
 
 	return &schemaModels, nil
 }
@@ -430,4 +434,65 @@ func topLevelFieldObjectDefinition(input resourcemanager.TerraformSchemaFieldObj
 	}
 
 	return input
+}
+
+func (b Builder) findUnusedModels(topLevelModelName string, input map[string]resourcemanager.TerraformSchemaModelDefinition) map[string]resourcemanager.TerraformSchemaModelDefinition {
+	usedModels := map[string]struct{}{
+		topLevelModelName: {},
+	}
+	for modelName, modelDetails := range input {
+		log.Printf("[STEBUG] - modelname: %q", modelName)
+		for fieldName, fieldDetails := range modelDetails.Fields {
+			log.Printf("[STEBUG] - fieldName: %q", fieldName)
+			if fieldDetails.ObjectDefinition.ReferenceName != nil {
+				if filterOutBySuffix(*fieldDetails.ObjectDefinition.ReferenceName) {
+					continue
+				}
+				usedModels[*fieldDetails.ObjectDefinition.ReferenceName] = struct{}{}
+				continue
+			}
+			topLevelObjectDefinition := topLevelObjectDefinitionInDefinition(fieldDetails.ObjectDefinition)
+			if topLevelObjectDefinition.Type == resourcemanager.TerraformSchemaFieldTypeReference && topLevelObjectDefinition.ReferenceName != nil {
+				// Constants _shouldn't_ be here now, but we'll check the ref is actually a model ¯\_(ツ)_/¯
+				if _, ok := b.constants[strings.TrimPrefix(*topLevelObjectDefinition.ReferenceName, topLevelModelName)]; ok {
+					continue
+				}
+
+				if filterOutBySuffix(*topLevelObjectDefinition.ReferenceName) {
+					break
+				}
+
+				usedModels[*topLevelObjectDefinition.ReferenceName] = struct{}{}
+			}
+		}
+	}
+
+	output := make(map[string]resourcemanager.TerraformSchemaModelDefinition)
+	for modelName := range usedModels {
+		output[modelName] = input[modelName]
+	}
+	return output
+}
+
+func topLevelObjectDefinitionInDefinition(input resourcemanager.TerraformSchemaFieldObjectDefinition) resourcemanager.TerraformSchemaFieldObjectDefinition {
+	if input.NestedObject != nil {
+		return topLevelObjectDefinitionInDefinition(*input.NestedObject)
+	}
+
+	return input
+}
+
+func filterOutBySuffix(input string) bool {
+	suffixesToRemove := []string{
+		"Error",
+		"Profile",
+		"Properties", // _should_ always be collapsed into parent model?
+		//"Sku",
+	}
+	for _, v := range suffixesToRemove {
+		if strings.HasSuffix(input, v) {
+			return true
+		}
+	}
+	return false
 }
