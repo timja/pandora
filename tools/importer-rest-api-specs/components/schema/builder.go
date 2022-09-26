@@ -445,12 +445,16 @@ func (b Builder) findUnusedModels(topLevelModelName string, input map[string]res
 		for fieldName, fieldDetails := range modelDetails.Fields {
 			log.Printf("[STEBUG] - fieldName: %q", fieldName)
 			if fieldDetails.ObjectDefinition.ReferenceName != nil {
+				if _, ok := b.constants[strings.TrimPrefix(*fieldDetails.ObjectDefinition.ReferenceName, topLevelModelName)]; ok {
+					continue
+				}
 				if filterOutBySuffix(*fieldDetails.ObjectDefinition.ReferenceName) {
 					continue
 				}
 				usedModels[*fieldDetails.ObjectDefinition.ReferenceName] = struct{}{}
 				continue
 			}
+			// Get Nested object references too...
 			nestedObjectDefinition := nestedObjectDefinitionInDefinition(fieldDetails.ObjectDefinition)
 			if nestedObjectDefinition.Type == resourcemanager.TerraformSchemaFieldTypeReference && nestedObjectDefinition.ReferenceName != nil {
 				// Constants _shouldn't_ be here now, but we'll check the ref is actually a model ¯\_(ツ)_/¯
