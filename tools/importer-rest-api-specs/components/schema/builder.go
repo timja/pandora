@@ -451,18 +451,18 @@ func (b Builder) findUnusedModels(topLevelModelName string, input map[string]res
 				usedModels[*fieldDetails.ObjectDefinition.ReferenceName] = struct{}{}
 				continue
 			}
-			topLevelObjectDefinition := topLevelObjectDefinitionInDefinition(fieldDetails.ObjectDefinition)
-			if topLevelObjectDefinition.Type == resourcemanager.TerraformSchemaFieldTypeReference && topLevelObjectDefinition.ReferenceName != nil {
+			nestedObjectDefinition := nestedObjectDefinitionInDefinition(fieldDetails.ObjectDefinition)
+			if nestedObjectDefinition.Type == resourcemanager.TerraformSchemaFieldTypeReference && nestedObjectDefinition.ReferenceName != nil {
 				// Constants _shouldn't_ be here now, but we'll check the ref is actually a model ¯\_(ツ)_/¯
-				if _, ok := b.constants[strings.TrimPrefix(*topLevelObjectDefinition.ReferenceName, topLevelModelName)]; ok {
+				if _, ok := b.constants[strings.TrimPrefix(*nestedObjectDefinition.ReferenceName, topLevelModelName)]; ok {
 					continue
 				}
 
-				if filterOutBySuffix(*topLevelObjectDefinition.ReferenceName) {
+				if filterOutBySuffix(*nestedObjectDefinition.ReferenceName) {
 					break
 				}
 
-				usedModels[*topLevelObjectDefinition.ReferenceName] = struct{}{}
+				usedModels[*nestedObjectDefinition.ReferenceName] = struct{}{}
 			}
 		}
 	}
@@ -474,9 +474,9 @@ func (b Builder) findUnusedModels(topLevelModelName string, input map[string]res
 	return output
 }
 
-func topLevelObjectDefinitionInDefinition(input resourcemanager.TerraformSchemaFieldObjectDefinition) resourcemanager.TerraformSchemaFieldObjectDefinition {
+func nestedObjectDefinitionInDefinition(input resourcemanager.TerraformSchemaFieldObjectDefinition) resourcemanager.TerraformSchemaFieldObjectDefinition {
 	if input.NestedObject != nil {
-		return topLevelObjectDefinitionInDefinition(*input.NestedObject)
+		return nestedObjectDefinitionInDefinition(*input.NestedObject)
 	}
 
 	return input
