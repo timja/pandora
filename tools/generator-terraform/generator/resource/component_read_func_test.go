@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"github.com/hashicorp/pandora/tools/generator-terraform/featureflags"
 	"testing"
 
 	"github.com/hashicorp/pandora/tools/generator-terraform/generator/models"
@@ -860,6 +861,122 @@ func TestComponentReadFunc_CodeForGet_Options(t *testing.T) {
 			}
 			return fmt.Errorf("retrieving %s: %+v", *id, err)
 		}
+`
+	assertTemplatedCodeMatches(t, expected, *actual)
+}
+
+func TestComponentReadFunc_MappingsToSdk_NoFields(t *testing.T) {
+	// TODO: remove this once the feature-flag is properly threaded through
+	if !featureflags.OutputMappings {
+		t.Skip("skipping since `featureflags.OutputMappings` is disabled")
+	}
+
+	actual, err := readFunctionComponents{
+		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
+			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{},
+		},
+	}.codeForModelAssignments()
+	if err != nil {
+		t.Fatalf("error: %+v", err)
+	}
+	expected := ``
+	assertTemplatedCodeMatches(t, expected, *actual)
+
+}
+
+func TestComponentReadFunc_MappingsToSdk_FromTopLevel(t *testing.T) {
+	actual, err := readFunctionComponents{
+		sdkResourceName: "ResourceGroup",
+		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
+			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{
+				"Description": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeString,
+					},
+					Optional: true,
+				},
+				"AnOtherSetting": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeString,
+					},
+					Optional: true,
+				},
+				"Location": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeLocation,
+					},
+					Required: true,
+				},
+				"Tags": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeTags,
+					},
+					Required: true,
+				},
+			},
+		},
+		mappings: resourcemanager.MappingDefinition{
+			Read: []resourcemanager.FieldMappingDefinition{
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Location",
+						SchemaModelName: "ResourceGroup",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Location",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Tags",
+						SchemaModelName: "ResourceGroup",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Tags",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Description",
+						SchemaModelName: "ResourceGroupProperties",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Description",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "AnOtherSetting",
+						SchemaModelName: "ResourceGroupProperties",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "AnOtherSetting",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+			},
+		},
+	}.codeForModelAssignments()
+	if err != nil {
+		t.Fatalf("error: %+v", err)
+	}
+
+	expected := `
+	if model := resp.Model; model != nil {
+        schema.Location = location.Normalize(model.Location)
+        schema.Tags = tags.Flatten(model.Tags)
+        if props := model.Properties; props != nil {
+    	    schema.AnOtherSetting = model.Properties.AnOtherSetting
+        	schema.Description = model.Properties.Description
+        	}
+        }
 `
 	assertTemplatedCodeMatches(t, expected, *actual)
 }

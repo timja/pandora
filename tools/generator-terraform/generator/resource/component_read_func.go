@@ -123,23 +123,28 @@ func (c readFunctionComponents) codeForGet() (*string, error) {
 }
 
 func (c readFunctionComponents) codeForModelAssignments() (*string, error) {
-	// first map all the Resource ID segments across
 	resourceIdMappings, err := c.codeForResourceIdMappings()
 	if err != nil {
 		return nil, fmt.Errorf("building code for resource id mappings: %+v", err)
 	}
+	// first map all the Resource ID segments across
+	if len(c.terraformModel.Fields) == 0 && len(*resourceIdMappings) == 0 {
+		// Nothing to see here, move along
+		empty := ""
+		return &empty, nil
+	}
 	// then output the top-level mappings, which'll call into nested items as required
 
-	// TODO: re-introduce top-level mappings
-	//topLevelMappings, err := c.codeForTopLevelMappings()
-	//if err != nil {
-	//	return nil, fmt.Errorf("building code for top-level field mappings: %+v", err)
-	//}
+	topLevelMappings, err := c.codeForTopLevelMappings()
+	if err != nil {
+		return nil, fmt.Errorf("building code for top-level field mappings: %+v", err)
+	}
 	output := fmt.Sprintf(`
 			if model := resp.Model; model != nil {
 				%[1]s
+				%[2]s
 			}
-`, *resourceIdMappings)
+`, *resourceIdMappings, *topLevelMappings)
 	return &output, nil
 }
 
@@ -185,30 +190,73 @@ func (c readFunctionComponents) codeForResourceIdMappings() (*string, error) {
 func (c readFunctionComponents) codeForTopLevelMappings() (*string, error) {
 	// TODO: tests for this
 	mappings := make([]string, 0)
+	mappingsMap := make(map[string]string, 0)
+	schemaPrefix := fmt.Sprintf("schema.")
+	hasProperties := false
+	for _, v := range c.mappings.Read {
+		fieldName := v.To.SdkFieldPath
+		if strings.HasSuffix(v.From.SchemaModelName, "Properties") {
+			hasProperties = true
+		}
+		if v.From.SchemaModelName != c.sdkResourceName {
+			// We only care about top level Items here...
+			continue
+		}
+		modelPrefix := fmt.Sprintf("model.%s", v.From.SchemaFieldPath)
+		temp, err := flattenAssignmentCodeForField(v, c.terraformModel.Fields[fieldName], schemaPrefix, modelPrefix)
+		if err != nil {
+			return nil, err
+		}
+		mappingsMap[fieldName] = *temp
+	}
 
-	//// ensure these are output alphabetically for consistency purposes across re-generations
-	//orderedFieldNames := make([]string, 0)
-	//for fieldName := range c.terraformModel.Fields {
-	//	orderedFieldNames = append(orderedFieldNames, fieldName)
-	//}
-	//sort.Strings(orderedFieldNames)
-	//
-	//for _, tfFieldName := range orderedFieldNames {
-	//	tfField := c.terraformModel.Fields[tfFieldName]
-	//	if tfField.Mappings.SdkPathForRead == nil {
-	//		continue
-	//	}
-	//
-	//	assignmentVariable := fmt.Sprintf("schema.%s", tfFieldName)
-	//	codeForMapping, err := flattenAssignmentCodeForField(assignmentVariable, tfFieldName, tfField, c.topLevelModel, c.models)
-	//	if err != nil {
-	//		return nil, fmt.Errorf("building flatten assignment code for field %q: %+v", tfFieldName, err)
-	//	}
-	//
-	//	mappings = append(mappings, *codeForMapping)
-	//}
+	orderedFieldNames := make([]string, 0)
+	for fieldName := range c.terraformModel.Fields {
+		orderedFieldNames = append(orderedFieldNames, fieldName)
+	}
+	sort.Strings(orderedFieldNames)
+	for _, tfFieldName := range orderedFieldNames {
+		if _, ok := mappingsMap[tfFieldName]; ok {
+			mappings = append(mappings, fmt.Sprintf("%s", mappingsMap[tfFieldName]))
+		}
+	}
 
-	sort.Strings(mappings)
+	if hasProperties {
+		propsMappings := make([]string, 0)
+		propsMappingsMap := make(map[string]string, 0)
+		propertiesCode := ""
+		// We only care if there's a top level Properties model here
+		for _, v := range c.mappings.Read {
+			fieldName := v.To.SdkFieldPath
+			if v.From.SchemaModelName == fmt.Sprintf("%sProperties", c.sdkResourceName) {
+				modelPrefix := fmt.Sprintf("model.Properties.%s", v.From.SchemaFieldPath)
+				temp, err := flattenAssignmentCodeForField(v, c.terraformModel.Fields[fieldName], schemaPrefix, modelPrefix)
+				if err != nil {
+					return nil, err
+				}
+				propsMappingsMap[fieldName] = *temp
+			}
+		}
+		orderedPropsNames := make([]string, 0)
+		for fieldName := range c.terraformModel.Fields {
+			orderedPropsNames = append(orderedPropsNames, fieldName)
+		}
+		sort.Strings(orderedPropsNames)
+		for _, tfFieldName := range orderedPropsNames {
+			if _, ok := propsMappingsMap[tfFieldName]; ok {
+				propsMappings = append(propsMappings, fmt.Sprintf("%s", propsMappingsMap[tfFieldName]))
+			}
+		}
+
+		propertiesCode = fmt.Sprintf(`
+		if props := model.Properties; props != nil {
+			%[1]s
+		}
+`, strings.Join(propsMappings, "\n"))
+		mappings = append(mappings, propertiesCode)
+	}
+
 	output := strings.Join(mappings, "\n")
+
 	return &output, nil
 }

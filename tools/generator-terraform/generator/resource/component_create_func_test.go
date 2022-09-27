@@ -911,6 +911,104 @@ func TestComponentCreate_MappingsFromSchema_TopLevelFields(t *testing.T) {
 	}
 
 	actual, err := createFunctionComponents{
+		sdkResourceName: "ResourceGroup",
+		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
+			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{
+				"Description": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeString,
+					},
+					Optional: true,
+				},
+				"AnOtherSetting": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeString,
+					},
+					Optional: true,
+				},
+				"Location": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeLocation,
+					},
+					Required: true,
+				},
+				"Tags": {
+					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+						Type: resourcemanager.TerraformSchemaFieldTypeTags,
+					},
+					Required: true,
+				},
+			},
+		},
+		mappings: resourcemanager.MappingDefinition{
+			Create: []resourcemanager.FieldMappingDefinition{
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Location",
+						SchemaModelName: "ResourceGroup",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Location",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Tags",
+						SchemaModelName: "ResourceGroup",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Tags",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Description",
+						SchemaModelName: "ResourceGroupProperties",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "Description",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "AnOtherSetting",
+						SchemaModelName: "ResourceGroupProperties",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "AnOtherSetting",
+						SdkModelName: "ResourceGroupResourceSchema",
+					},
+				},
+			},
+		},
+	}.mappingsFromSchema()
+	if err != nil {
+		t.Fatalf("error: %+v", err)
+	}
+	expected := `
+	payload.Location = location.Normalize(model.Location)
+    payload.Tags = tags.Expand(model.Tags)
+	payload.Properties = &ResourceGroupProperties{}
+	payload.Properties.AnOtherSetting = utils.String(model.AnOtherSetting)
+	payload.Properties.Description = utils.String(model.Description)
+`
+	assertTemplatedCodeMatches(t, expected, *actual)
+}
+
+func TestComponentCreate_MappingsFromSchema_NestedFieldToTopLevel(t *testing.T) {
+	// TODO: remove this once the feature-flag is properly threaded through
+	if !featureflags.NestedOutputMappings {
+		t.Skip("skipping since `featureflags.NestedOutputMappings` is disabled")
+	}
+
+	actual, err := createFunctionComponents{
 		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
 			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{
 				"SomeField": {
@@ -921,12 +1019,27 @@ func TestComponentCreate_MappingsFromSchema_TopLevelFields(t *testing.T) {
 				},
 			},
 		},
+		mappings: resourcemanager.MappingDefinition{
+			Create: []resourcemanager.FieldMappingDefinition{
+				{
+					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
+					From: resourcemanager.FieldMappingFromDefinition{
+						SchemaFieldPath: "Properties.SomeSchemaModel",
+						SchemaModelName: "SomeSchemaField",
+					},
+					To: resourcemanager.FieldMappingToDefinition{
+						SdkFieldPath: "SomeSdkModel",
+						SdkModelName: "SomeField",
+					},
+				},
+			},
+		},
 	}.mappingsFromSchema()
 	if err != nil {
 		t.Fatalf("error: %+v", err)
 	}
 	expected := `
-	payload.SomeSchemaField = config.SomeField
+	        payload.Properties.SomeSchemaModel.SomeSchemaField = r.expandSomeField(config.SomeSdkModel.SomeField)
 `
 	assertTemplatedCodeMatches(t, expected, *actual)
 }

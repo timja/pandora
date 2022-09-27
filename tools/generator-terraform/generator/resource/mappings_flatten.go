@@ -1,5 +1,30 @@
 package resource
 
+import (
+	"fmt"
+	"strings"
+
+	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
+)
+
+const (
+	topLevelSchemaName = "schema."
+)
+
+func flattenAssignmentCodeForField(fieldMapping resourcemanager.FieldMappingDefinition, field resourcemanager.TerraformSchemaFieldDefinition, source string, target string) (*string, error) {
+	if strings.Contains(fieldMapping.From.SchemaFieldPath, ".") {
+		return nil, fmt.Errorf("nested paths are not currently supported")
+	}
+
+	assignmentCode, err := flattenAssignmentCodeForFieldObjectDefinition(target, field)
+	if err != nil {
+		return nil, err
+	}
+	output := fmt.Sprintf("%s%s = %s", source, fieldMapping.From.SchemaFieldPath, *assignmentCode)
+
+	return &output, nil
+}
+
 //
 //func flattenAssignmentCodeForField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
 //	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
@@ -27,31 +52,34 @@ package resource
 //	return &output, nil
 //}
 //
-//func flattenAssignmentCodeForFieldObjectDefinition(mapping string, objectDefinition resourcemanager.TerraformSchemaFieldObjectDefinition) (*string, error) {
-//	directAssignments := map[resourcemanager.TerraformSchemaFieldType]struct{}{
-//		resourcemanager.TerraformSchemaFieldTypeBoolean:  {},
-//		resourcemanager.TerraformSchemaFieldTypeDateTime: {}, // TODO: confirm
-//		resourcemanager.TerraformSchemaFieldTypeInteger:  {},
-//		resourcemanager.TerraformSchemaFieldTypeFloat:    {},
-//		resourcemanager.TerraformSchemaFieldTypeString:   {},
-//	}
-//	if _, ok := directAssignments[objectDefinition.Type]; ok {
-//		// TODO: if the field is optional, conditionally output this as a pointer
-//		return &mapping, nil
-//	}
-//
-//	switch objectDefinition.Type {
-//	case resourcemanager.TerraformSchemaFieldTypeLocation:
-//		{
-//			// TODO: find the field in the response and confirm if we need to call NormalizeNilable
-//			output := fmt.Sprintf("location.Normalize(%s)", mapping)
-//			return &output, nil
-//		}
-//	case resourcemanager.TerraformSchemaFieldTypeTags:
-//		{
-//			output := fmt.Sprintf("tags.Flatten(%s)", mapping)
-//			return &output, nil
-//		}
-//	}
-//	return nil, fmt.Errorf("internal-error: unimplemented field type %q for flatten mapping %q", string(objectDefinition.Type), mapping)
-//}
+func flattenAssignmentCodeForFieldObjectDefinition(mapping string, fieldDefinition resourcemanager.TerraformSchemaFieldDefinition) (*string, error) {
+	directAssignments := map[resourcemanager.TerraformSchemaFieldType]struct{}{
+		resourcemanager.TerraformSchemaFieldTypeBoolean:  {},
+		resourcemanager.TerraformSchemaFieldTypeDateTime: {}, // TODO: confirm
+		resourcemanager.TerraformSchemaFieldTypeInteger:  {},
+		resourcemanager.TerraformSchemaFieldTypeFloat:    {},
+		resourcemanager.TerraformSchemaFieldTypeString:   {},
+	}
+	if _, ok := directAssignments[fieldDefinition.ObjectDefinition.Type]; ok {
+		// TODO: if the field is optional, conditionally output this as a pointer
+		return &mapping, nil
+	}
+
+	switch fieldDefinition.ObjectDefinition.Type {
+	case resourcemanager.TerraformSchemaFieldTypeLocation:
+		{
+			output := fmt.Sprintf("location.Normalize(%s)", mapping)
+			if fieldDefinition.Optional {
+				output = fmt.Sprintf("location.NormalizeNilable(%s)", mapping)
+			}
+
+			return &output, nil
+		}
+	case resourcemanager.TerraformSchemaFieldTypeTags:
+		{
+			output := fmt.Sprintf("tags.Flatten(%s)", mapping)
+			return &output, nil
+		}
+	}
+	return nil, fmt.Errorf("internal-error: unimplemented field type %q for flatten mapping %q", string(fieldDefinition.ObjectDefinition.Type), mapping)
+}

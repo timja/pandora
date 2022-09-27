@@ -6,9 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/pandora/tools/generator-terraform/featureflags"
-
 	"github.com/hashicorp/pandora/tools/generator-terraform/generator/models"
-
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
@@ -204,30 +202,65 @@ func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
 	}
 
 	mappings := make([]string, 0)
+	mappingsMap := make(map[string]string, 0)
+	hasProperties := false
+	for _, v := range h.mappings.Create {
+		if strings.HasSuffix(v.From.SchemaModelName, "Properties") {
+			hasProperties = true
+		}
+		if v.From.SchemaModelName != h.sdkResourceName {
+			// We only care about top level Items here...
+			continue
+		}
+		fieldName := v.To.SdkFieldPath
+		temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.To.SdkModelName)
+		if err != nil {
+			return nil, err
+		}
+		mappingsMap[fieldName] = *temp
+	}
 
-	//// ensure these are output alphabetically for consistency purposes across re-generations
-	//orderedFieldNames := make([]string, 0)
-	//for fieldName := range h.terraformModel.Fields {
-	//	orderedFieldNames = append(orderedFieldNames, fieldName)
-	//}
-	//sort.Strings(orderedFieldNames)
-	//
-	//for _, tfFieldName := range orderedFieldNames {
-	//	tfField := h.terraformModel.Fields[tfFieldName]
-	//	if tfField.Mappings.SdkPathForCreate == nil {
-	//		continue
-	//	}
-	//
-	//	assignmentVariable := fmt.Sprintf("payload.%s", *tfField.Mappings.SdkPathForCreate)
-	//	codeForMapping, err := expandAssignmentCodeForCreateField(assignmentVariable, tfFieldName, tfField, h.topLevelModel, h.models)
-	//	if err != nil {
-	//		return nil, fmt.Errorf("building expand assignment code for field %q: %+v", tfFieldName, err)
-	//	}
-	//
-	//	mappings = append(mappings, *codeForMapping)
-	//}
+	// ensure these are output alphabetically for consistency purposes across re-generations
+	orderedFieldNames := make([]string, 0)
+	for fieldName := range h.terraformModel.Fields {
+		orderedFieldNames = append(orderedFieldNames, fieldName)
+	}
+	sort.Strings(orderedFieldNames)
+	for _, tfFieldName := range orderedFieldNames {
+		if _, ok := mappingsMap[tfFieldName]; ok {
+			mappings = append(mappings, fmt.Sprintf("%s", mappingsMap[tfFieldName]))
+		}
+	}
 
-	sort.Strings(mappings)
+	// Now deal with building the properties
+	if hasProperties {
+		propsMappings := make([]string, 0)
+		propsMappingsMap := make(map[string]string, 0)
+
+		mappings = append(mappings, fmt.Sprintf("payload.%s = &%s", "Properties", fmt.Sprintf("%sProperties{}", h.sdkResourceName)))
+		for _, v := range h.mappings.Create {
+			if v.From.SchemaModelName == fmt.Sprintf("%sProperties", h.sdkResourceName) {
+				fieldName := v.To.SdkFieldPath
+				temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.To.SdkModelName)
+				if err != nil {
+					return nil, err
+				}
+				propsMappingsMap[fieldName] = *temp
+			}
+		}
+		orderedPropsNames := make([]string, 0)
+		for fieldName := range h.terraformModel.Fields {
+			orderedPropsNames = append(orderedPropsNames, fieldName)
+		}
+		sort.Strings(orderedPropsNames)
+		for _, tfFieldName := range orderedPropsNames {
+			if _, ok := propsMappingsMap[tfFieldName]; ok {
+				propsMappings = append(propsMappings, fmt.Sprintf("%s", propsMappingsMap[tfFieldName]))
+			}
+		}
+		mappings = append(mappings, propsMappings...)
+	}
+
 	output := strings.Join(mappings, "\n")
 	return &output, nil
 }
