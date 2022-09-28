@@ -919,46 +919,38 @@ func TestComponentReadFunc_MappingsToSdk_FromTopLevel(t *testing.T) {
 			Read: []resourcemanager.FieldMappingDefinition{
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
-						SchemaFieldPath: "Location",
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaModelName: "ResourceGroup",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Location",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SchemaFieldPath: "Location",
+						SdkFieldPath:    "Location",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Tags",
 						SchemaModelName: "ResourceGroup",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Tags",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "Tags",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Description",
 						SchemaModelName: "ResourceGroupProperties",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Description",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "Description",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "AnOtherSetting",
 						SchemaModelName: "ResourceGroupProperties",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "AnOtherSetting",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "AnOtherSetting",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 			},

@@ -12,7 +12,7 @@ const (
 )
 
 func flattenAssignmentCodeForField(fieldMapping resourcemanager.FieldMappingDefinition, field resourcemanager.TerraformSchemaFieldDefinition, source string, target string) (*string, error) {
-	if strings.Contains(fieldMapping.From.SchemaFieldPath, ".") {
+	if strings.Contains(fieldMapping.DirectAssignment.SchemaFieldPath, ".") {
 		return nil, fmt.Errorf("nested paths are not currently supported")
 	}
 
@@ -20,7 +20,7 @@ func flattenAssignmentCodeForField(fieldMapping resourcemanager.FieldMappingDefi
 	if err != nil {
 		return nil, err
 	}
-	output := fmt.Sprintf("%s%s = %s", source, fieldMapping.From.SchemaFieldPath, *assignmentCode)
+	output := fmt.Sprintf("%s%s = %s", source, fieldMapping.DirectAssignment.SchemaFieldPath, *assignmentCode)
 
 	return &output, nil
 }

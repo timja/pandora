@@ -17,31 +17,31 @@ const (
 )
 
 func expandAssignmentCodeForCreateField(fieldMapping resourcemanager.FieldMappingDefinition, field resourcemanager.TerraformSchemaFieldDefinition, modelName string) (*string, error) {
-	if strings.Contains(fieldMapping.From.SchemaFieldPath, ".") {
+	if strings.Contains(fieldMapping.DirectAssignment.SchemaFieldPath, ".") {
 		// TODO - Pure guesswork right now - revisit when nested mappings are a thing
-		toPath := fieldMapping.To.SdkModelName
-		if fieldMapping.To.SdkFieldPath != "" {
-			toPath = strings.Join([]string{fieldMapping.To.SdkFieldPath, fieldMapping.To.SdkModelName}, ".")
+		toPath := fieldMapping.DirectAssignment.SdkModelName
+		if fieldMapping.DirectAssignment.SdkFieldPath != "" {
+			toPath = strings.Join([]string{fieldMapping.DirectAssignment.SdkFieldPath, fieldMapping.DirectAssignment.SdkModelName}, ".")
 		}
-		assignmentCode := fmt.Sprintf("r.expand%[1]s(%s%[2]s)", fieldMapping.To.SdkModelName, topLevelToPath, toPath)
-		fromPath := fieldMapping.To.SdkModelName
-		if fieldMapping.From.SchemaFieldPath != "" {
-			fromPath = strings.Join([]string{fieldMapping.From.SchemaFieldPath, fieldMapping.From.SchemaModelName}, ".")
+		assignmentCode := fmt.Sprintf("r.expand%[1]s(%s%[2]s)", fieldMapping.DirectAssignment.SdkModelName, topLevelToPath, toPath)
+		fromPath := fieldMapping.DirectAssignment.SdkModelName
+		if fieldMapping.DirectAssignment.SchemaFieldPath != "" {
+			fromPath = strings.Join([]string{fieldMapping.DirectAssignment.SchemaFieldPath, fieldMapping.DirectAssignment.SchemaModelName}, ".")
 		}
 		output := fmt.Sprintf("%s.%s = %s", topLevelToPath, fromPath, assignmentCode)
 		return &output, nil
 	}
 
-	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("model.%[1]s", fieldMapping.To.SdkFieldPath), field)
+	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("model.%[1]s", fieldMapping.DirectAssignment.SdkFieldPath), field)
 	if err != nil {
-		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", fieldMapping.To.SdkFieldPath, err)
+		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", fieldMapping.DirectAssignment.SdkFieldPath, err)
 	}
 	output := ""
 	switch field.ObjectDefinition.Type {
 	case resourcemanager.TerraformSchemaFieldTypeLocation, resourcemanager.TerraformSchemaFieldTypeZones, resourcemanager.TerraformSchemaFieldTypeZone, resourcemanager.TerraformSchemaFieldTypeTags:
-		output = fmt.Sprintf("%s%s = %s", topLevelFromPath, fieldMapping.From.SchemaFieldPath, *assignmentCode)
+		output = fmt.Sprintf("%s%s = %s", topLevelFromPath, fieldMapping.DirectAssignment.SchemaFieldPath, *assignmentCode)
 	default:
-		output = fmt.Sprintf("%s%s = %s", topLevelPropertiesFromPath, fieldMapping.From.SchemaFieldPath, *assignmentCode)
+		output = fmt.Sprintf("%s%s = %s", topLevelPropertiesFromPath, fieldMapping.DirectAssignment.SchemaFieldPath, *assignmentCode)
 
 	}
 	return &output, nil

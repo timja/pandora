@@ -944,46 +944,38 @@ func TestComponentCreate_MappingsFromSchema_TopLevelFields(t *testing.T) {
 			Create: []resourcemanager.FieldMappingDefinition{
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Location",
 						SchemaModelName: "ResourceGroup",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Location",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "Location",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Tags",
 						SchemaModelName: "ResourceGroup",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Tags",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "Tags",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Description",
 						SchemaModelName: "ResourceGroupProperties",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "Description",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "Description",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "AnOtherSetting",
 						SchemaModelName: "ResourceGroupProperties",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "AnOtherSetting",
-						SdkModelName: "ResourceGroupResourceSchema",
+						SdkFieldPath:    "AnOtherSetting",
+						SdkModelName:    "ResourceGroupResourceSchema",
 					},
 				},
 			},
@@ -1023,13 +1015,11 @@ func TestComponentCreate_MappingsFromSchema_NestedFieldToTopLevel(t *testing.T) 
 			Create: []resourcemanager.FieldMappingDefinition{
 				{
 					Type: resourcemanager.DirectAssignmentMappingDefinitionType,
-					From: resourcemanager.FieldMappingFromDefinition{
+					DirectAssignment: &resourcemanager.FieldMappingDirectAssignmentDefinition{
 						SchemaFieldPath: "Properties.SomeSchemaModel",
 						SchemaModelName: "SomeSchemaField",
-					},
-					To: resourcemanager.FieldMappingToDefinition{
-						SdkFieldPath: "SomeSdkModel",
-						SdkModelName: "SomeField",
+						SdkFieldPath:    "SomeSdkModel",
+						SdkModelName:    "SomeField",
 					},
 				},
 			},

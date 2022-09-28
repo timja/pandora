@@ -205,15 +205,15 @@ func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
 	mappingsMap := make(map[string]string, 0)
 	hasProperties := false
 	for _, v := range h.mappings.Create {
-		if strings.HasSuffix(v.From.SchemaModelName, "Properties") {
+		if strings.HasSuffix(v.DirectAssignment.SchemaModelName, "Properties") {
 			hasProperties = true
 		}
-		if v.From.SchemaModelName != h.sdkResourceName {
+		if v.DirectAssignment.SchemaModelName != h.sdkResourceName {
 			// We only care about top level Items here...
 			continue
 		}
-		fieldName := v.To.SdkFieldPath
-		temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.To.SdkModelName)
+		fieldName := v.DirectAssignment.SdkFieldPath
+		temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.DirectAssignment.SdkModelName)
 		if err != nil {
 			return nil, err
 		}
@@ -239,9 +239,9 @@ func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
 
 		mappings = append(mappings, fmt.Sprintf("payload.%s = &%s", "Properties", fmt.Sprintf("%sProperties{}", h.sdkResourceName)))
 		for _, v := range h.mappings.Create {
-			if v.From.SchemaModelName == fmt.Sprintf("%sProperties", h.sdkResourceName) {
-				fieldName := v.To.SdkFieldPath
-				temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.To.SdkModelName)
+			if v.DirectAssignment.SchemaModelName == fmt.Sprintf("%sProperties", h.sdkResourceName) {
+				fieldName := v.DirectAssignment.SdkFieldPath
+				temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.DirectAssignment.SdkModelName)
 				if err != nil {
 					return nil, err
 				}

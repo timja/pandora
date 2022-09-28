@@ -194,15 +194,15 @@ func (c readFunctionComponents) codeForTopLevelMappings() (*string, error) {
 	schemaPrefix := fmt.Sprintf("schema.")
 	hasProperties := false
 	for _, v := range c.mappings.Read {
-		fieldName := v.To.SdkFieldPath
-		if strings.HasSuffix(v.From.SchemaModelName, "Properties") {
+		fieldName := v.DirectAssignment.SdkFieldPath
+		if strings.HasSuffix(v.DirectAssignment.SchemaModelName, "Properties") {
 			hasProperties = true
 		}
-		if v.From.SchemaModelName != c.sdkResourceName {
+		if v.DirectAssignment.SchemaModelName != c.sdkResourceName {
 			// We only care about top level Items here...
 			continue
 		}
-		modelPrefix := fmt.Sprintf("model.%s", v.From.SchemaFieldPath)
+		modelPrefix := fmt.Sprintf("model.%s", v.DirectAssignment.SchemaFieldPath)
 		temp, err := flattenAssignmentCodeForField(v, c.terraformModel.Fields[fieldName], schemaPrefix, modelPrefix)
 		if err != nil {
 			return nil, err
@@ -227,9 +227,9 @@ func (c readFunctionComponents) codeForTopLevelMappings() (*string, error) {
 		propertiesCode := ""
 		// We only care if there's a top level Properties model here
 		for _, v := range c.mappings.Read {
-			fieldName := v.To.SdkFieldPath
-			if v.From.SchemaModelName == fmt.Sprintf("%sProperties", c.sdkResourceName) {
-				modelPrefix := fmt.Sprintf("model.Properties.%s", v.From.SchemaFieldPath)
+			fieldName := v.DirectAssignment.SdkFieldPath
+			if v.DirectAssignment.SchemaModelName == fmt.Sprintf("%sProperties", c.sdkResourceName) {
+				modelPrefix := fmt.Sprintf("model.Properties.%s", v.DirectAssignment.SchemaFieldPath)
 				temp, err := flattenAssignmentCodeForField(v, c.terraformModel.Fields[fieldName], schemaPrefix, modelPrefix)
 				if err != nil {
 					return nil, err
