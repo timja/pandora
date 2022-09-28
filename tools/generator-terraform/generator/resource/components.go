@@ -60,6 +60,7 @@ func codeForResource(input models.ResourceInput) (*string, error) {
 		updateFuncForResource,
 
 		// TODO: Mappings
+		codeForExpandAndFlattenFunctions,
 		codeForNonTopLevelModels,
 	}
 
