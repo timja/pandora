@@ -2,5 +2,5 @@ package featureflags
 
 // @tombuildsstuff: temporarily disabling mappings to prioritise threading through Schema, Docs and Tests
 
-var OutputMappings = true
+var OutputMappings = false
 var NestedOutputMappings = false

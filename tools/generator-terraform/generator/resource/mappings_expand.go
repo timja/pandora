@@ -2,7 +2,6 @@ package resource
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
@@ -10,115 +9,37 @@ import (
 //// TODO: unit tests for this
 //
 
-const (
-	topLevelFromPath           = "payload."
-	topLevelPropertiesFromPath = "payload.Properties."
-	topLevelToPath             = "model."
-)
-
-func expandAssignmentCodeForCreateField(fieldMapping resourcemanager.FieldMappingDefinition, field resourcemanager.TerraformSchemaFieldDefinition, modelName string) (*string, error) {
-	if strings.Contains(fieldMapping.DirectAssignment.SchemaFieldPath, ".") {
-		// TODO - Pure guesswork right now - revisit when nested mappings are a thing
-		toPath := fieldMapping.DirectAssignment.SdkModelName
-		if fieldMapping.DirectAssignment.SdkFieldPath != "" {
-			toPath = strings.Join([]string{fieldMapping.DirectAssignment.SdkFieldPath, fieldMapping.DirectAssignment.SdkModelName}, ".")
-		}
-		assignmentCode := fmt.Sprintf("r.expand%[1]s(%s%[2]s)", fieldMapping.DirectAssignment.SdkModelName, topLevelToPath, toPath)
-		fromPath := fieldMapping.DirectAssignment.SdkModelName
-		if fieldMapping.DirectAssignment.SchemaFieldPath != "" {
-			fromPath = strings.Join([]string{fieldMapping.DirectAssignment.SchemaFieldPath, fieldMapping.DirectAssignment.SchemaModelName}, ".")
-		}
-		output := fmt.Sprintf("%s.%s = %s", topLevelToPath, fromPath, assignmentCode)
-		return &output, nil
-	}
-
-	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("model.%[1]s", fieldMapping.DirectAssignment.SdkFieldPath), field)
-	if err != nil {
-		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", fieldMapping.DirectAssignment.SdkFieldPath, err)
-	}
-	output := ""
-	switch field.ObjectDefinition.Type {
-	case resourcemanager.TerraformSchemaFieldTypeLocation, resourcemanager.TerraformSchemaFieldTypeZones, resourcemanager.TerraformSchemaFieldTypeZone, resourcemanager.TerraformSchemaFieldTypeTags:
-		output = fmt.Sprintf("%s%s = %s", topLevelFromPath, fieldMapping.DirectAssignment.SchemaFieldPath, *assignmentCode)
-	default:
-		output = fmt.Sprintf("%s%s = %s", topLevelPropertiesFromPath, fieldMapping.DirectAssignment.SchemaFieldPath, *assignmentCode)
-
-	}
-	return &output, nil
-}
-
-//func expandAssignmentCodeForCreateField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
-//	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
-//	// the expand function, which in turn needs to check if `Foo` is nil (and return
-//	// whatever it needs too)
-//	topLevelFieldMapping := *field.Mappings.SdkPathForCreate
-//	if strings.Contains(topLevelFieldMapping, ".") {
-//		split := strings.Split(topLevelFieldMapping, ".")
-//		topLevelFieldMapping = split[0]
-//
-//		// TODO: generate that method which needs to split/nil-check on
-//		// remainingMapping := strings.Join(split[1:], ".")
-//
-//		assignmentCode := fmt.Sprintf("r.expand%[1]s(config.%[2]s)", schemaFieldName, topLevelFieldMapping)
-//		output := fmt.Sprintf("// TODO: - %s = %s", assignmentVariable, assignmentCode)
-//		return &output, nil
-//	}
-//
-//	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("config.%[1]s", schemaFieldName), field.ObjectDefinition)
-//	if err != nil {
-//		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", schemaFieldName, err)
-//	}
-//
-//	output := fmt.Sprintf("%s = %s", assignmentVariable, *assignmentCode)
-//	return &output, nil
-//}
-
-//func expandAssignmentCodeForUpdateField(assignmentVariable string, schemaFieldName string, field resourcemanager.TerraformSchemaFieldDefinition, currentModel resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, error) {
-//	// if it's a nested mapping (e.g. `Properties.Foo`) we need to pass `Properties` to
-//	// the expand function, which in turn needs to check if `Foo` is nil (and return
-//	// whatever it needs too)
-//	topLevelFieldMapping := *field.Mappings.SdkPathForUpdate
-//	if strings.Contains(topLevelFieldMapping, ".") {
-//		split := strings.Split(topLevelFieldMapping, ".")
-//		topLevelFieldMapping = split[0]
-//
-//		// TODO: generate that method which needs to split/nil-check on
-//		// remainingMapping := strings.Join(split[1:], ".")
-//
-//		assignmentCode := fmt.Sprintf("r.expand%[1]s(config.%[2]s)", schemaFieldName, topLevelFieldMapping)
-//		output := fmt.Sprintf("// TODO: - %s = %s", assignmentVariable, assignmentCode)
-//		return &output, nil
-//	}
-//
-//	assignmentCode, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("config.%[1]s", schemaFieldName), field.ObjectDefinition)
-//	if err != nil {
-//		return nil, fmt.Errorf("building expand assignment code for top level field %q: %+v", schemaFieldName, err)
-//	}
-//
-//	output := fmt.Sprintf("%s = %s", assignmentVariable, *assignmentCode)
-//	return &output, nil
-//}
-//
-func expandAssignmentCodeForFieldObjectDefinition(mapping string, fieldDefinition resourcemanager.TerraformSchemaFieldDefinition) (*string, error) {
+func expandAssignmentCodeForFieldObjectDefinition(left string, right string, fieldDefinition resourcemanager.TerraformSchemaFieldDefinition) (*string, error) {
 	directAssignments := map[resourcemanager.TerraformSchemaFieldType]struct{}{
 		resourcemanager.TerraformSchemaFieldTypeBoolean:  {},
 		resourcemanager.TerraformSchemaFieldTypeDateTime: {}, // TODO: confirm
 		resourcemanager.TerraformSchemaFieldTypeInteger:  {},
 		resourcemanager.TerraformSchemaFieldTypeFloat:    {},
 		resourcemanager.TerraformSchemaFieldTypeString:   {},
+		// We're not dealing with these yet :see_no_evil:
+		resourcemanager.TerraformSchemaFieldTypeList:                          {},
+		resourcemanager.TerraformSchemaFieldTypeReference:                     {},
+		resourcemanager.TerraformSchemaFieldTypeIdentitySystemAssigned:        {},
+		resourcemanager.TerraformSchemaFieldTypeIdentitySystemAndUserAssigned: {},
+		resourcemanager.TerraformSchemaFieldTypeIdentitySystemOrUserAssigned:  {},
+		resourcemanager.TerraformSchemaFieldTypeIdentityUserAssigned:          {},
 	}
 	if _, ok := directAssignments[fieldDefinition.ObjectDefinition.Type]; ok {
 		// TODO: if the field is optional, conditionally output this as a pointer
+		output := fmt.Sprintf("\t\t%s = %s", left, right)
 		if fieldDefinition.Optional {
-			mapping = fmt.Sprintf("utils.String(%s)", mapping)
+			output = fmt.Sprintf("\t\t%s = utils.ToPtr(%s)", left, right)
 		}
-		return &mapping, nil
+		return &output, nil
 	}
 
 	switch fieldDefinition.ObjectDefinition.Type {
 	case resourcemanager.TerraformSchemaFieldTypeLocation:
 		{
-			output := fmt.Sprintf("location.Normalize(%s)", mapping)
+			output := fmt.Sprintf("\t\t%s = location.Normalize(%s)", left, right)
+			if fieldDefinition.Optional {
+				output = fmt.Sprintf("\t\t%s = location.NormalizeNilable(%s)", left, right)
+			}
 			return &output, nil
 		}
 	//case resourcemanager.TerraformSchemaFieldTypeIdentitySystemAssigned:
@@ -131,12 +52,9 @@ func expandAssignmentCodeForFieldObjectDefinition(mapping string, fieldDefinitio
 	//}
 	case resourcemanager.TerraformSchemaFieldTypeTags:
 		{
-			output := fmt.Sprintf("tags.Expand(%s)", mapping)
+			output := fmt.Sprintf("\t\t%s = tags.Expand(%s)", left, right)
 			return &output, nil
 		}
 	}
-	//return nil, fmt.Errorf("internal-error: unimplemented field type %q for expand mapping %q", string(fieldDefinition.ObjectDefinition.Type), mapping)
-	// TODO - Hack for Gen until there's real mappings to work with on actual resources
-	empty := ""
-	return &empty, nil
+	return nil, fmt.Errorf("internal-error: unimplemented field type %q for expand mapping %q", string(fieldDefinition.ObjectDefinition.Type), left)
 }

@@ -2,10 +2,8 @@ package resource
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
-	"github.com/hashicorp/pandora/tools/generator-terraform/featureflags"
 	"github.com/hashicorp/pandora/tools/generator-terraform/generator/models"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
@@ -89,7 +87,6 @@ func createFunctionForResource(input models.ResourceInput) (*string, error) {
 		helper.payloadDefinition,
 		// NOTE: we intentionally don't map fields from the Resource ID -> Payload
 		// since (per ARM) these don't need to be set
-		helper.mappingsFromSchema,
 		helper.create,
 	}
 	lines := make([]string, 0)
@@ -184,84 +181,10 @@ id := %[1]s(%[2]s)
 func (h createFunctionComponents) payloadDefinition() (*string, error) {
 	// NOTE: whilst Payload is _technically_ optional in the API endpoint it's not, else it
 	// wouldn't be a Create method
-	createObjectName, err := h.createMethod.RequestObject.GolangTypeName(&h.sdkResourceNameLowered)
-	if err != nil {
-		return nil, fmt.Errorf("determining Golang Type name for Create Request Object: %+v", err)
-	}
 
 	output := fmt.Sprintf(`
-			payload := %[1]s{}
-`, *createObjectName)
-	return &output, nil
-}
-
-func (h createFunctionComponents) mappingsFromSchema() (*string, error) {
-	if !featureflags.OutputMappings {
-		output := `// TODO: re-enable Mappings (featureflags.OutputMappings)`
-		return &output, nil
-	}
-
-	mappings := make([]string, 0)
-	mappingsMap := make(map[string]string, 0)
-	hasProperties := false
-	for _, v := range h.mappings.Create {
-		if strings.HasSuffix(v.DirectAssignment.SchemaModelName, "Properties") {
-			hasProperties = true
-		}
-		if v.DirectAssignment.SchemaModelName != h.sdkResourceName {
-			// We only care about top level Items here...
-			continue
-		}
-		fieldName := v.DirectAssignment.SdkFieldPath
-		temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.DirectAssignment.SdkModelName)
-		if err != nil {
-			return nil, err
-		}
-		mappingsMap[fieldName] = *temp
-	}
-
-	// ensure these are output alphabetically for consistency purposes across re-generations
-	orderedFieldNames := make([]string, 0)
-	for fieldName := range h.terraformModel.Fields {
-		orderedFieldNames = append(orderedFieldNames, fieldName)
-	}
-	sort.Strings(orderedFieldNames)
-	for _, tfFieldName := range orderedFieldNames {
-		if _, ok := mappingsMap[tfFieldName]; ok {
-			mappings = append(mappings, fmt.Sprintf("%s", mappingsMap[tfFieldName]))
-		}
-	}
-
-	// Now deal with building the properties
-	if hasProperties {
-		propsMappings := make([]string, 0)
-		propsMappingsMap := make(map[string]string, 0)
-
-		mappings = append(mappings, fmt.Sprintf("payload.%s = &%s", "Properties", fmt.Sprintf("%sProperties{}", h.sdkResourceName)))
-		for _, v := range h.mappings.Create {
-			if v.DirectAssignment.SchemaModelName == fmt.Sprintf("%sProperties", h.sdkResourceName) {
-				fieldName := v.DirectAssignment.SdkFieldPath
-				temp, err := expandAssignmentCodeForCreateField(v, h.terraformModel.Fields[fieldName], v.DirectAssignment.SdkModelName)
-				if err != nil {
-					return nil, err
-				}
-				propsMappingsMap[fieldName] = *temp
-			}
-		}
-		orderedPropsNames := make([]string, 0)
-		for fieldName := range h.terraformModel.Fields {
-			orderedPropsNames = append(orderedPropsNames, fieldName)
-		}
-		sort.Strings(orderedPropsNames)
-		for _, tfFieldName := range orderedPropsNames {
-			if _, ok := propsMappingsMap[tfFieldName]; ok {
-				propsMappings = append(propsMappings, fmt.Sprintf("%s", propsMappingsMap[tfFieldName]))
-			}
-		}
-		mappings = append(mappings, propsMappings...)
-	}
-
-	output := strings.Join(mappings, "\n")
+			payload := expand%[1]sTo%[2]s(%[1]s)
+`, h.schemaModelName, h.resourceTypeName)
 	return &output, nil
 }
 

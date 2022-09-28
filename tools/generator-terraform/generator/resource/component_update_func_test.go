@@ -774,35 +774,35 @@ func TestComponentUpdate_MappingsFromSchema_NoFields(t *testing.T) {
 	assertTemplatedCodeMatches(t, expected, *actual)
 }
 
-func TestComponentUpdate_MappingsFromSchema_TopLevelFields(t *testing.T) {
-	// TODO: remove this once the feature-flag is properly threaded through
-	if !featureflags.OutputMappings {
-		t.Skip("skipping since `featureflags.OutputMappings` is disabled")
-	}
-
-	actual, err := updateFuncHelpers{
-		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
-			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{
-				"SomeField": {
-					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
-						Type: resourcemanager.TerraformSchemaFieldTypeString,
-					},
-					Required: true,
-					HclName:  "some_field",
-				},
-			},
-		},
-	}.mappingsFromSchema()
-	if err != nil {
-		t.Fatalf("error: %+v", err)
-	}
-	expected := `
-	if metadata.ResourceData.HasChange("some_field") {
-		payload.SomeSchemaField = config.SomeField
-	}
-`
-	assertTemplatedCodeMatches(t, expected, *actual)
-}
+//func TestComponentUpdate_MappingsFromSchema_TopLevelFields(t *testing.T) {
+//	// TODO: remove this once the feature-flag is properly threaded through
+//	if !featureflags.OutputMappings {
+//		t.Skip("skipping since `featureflags.OutputMappings` is disabled")
+//	}
+//
+//	actual, err := updateFuncHelpers{
+//		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
+//			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{
+//				"SomeField": {
+//					ObjectDefinition: resourcemanager.TerraformSchemaFieldObjectDefinition{
+//						Type: resourcemanager.TerraformSchemaFieldTypeString,
+//					},
+//					Required: true,
+//					HclName:  "some_field",
+//				},
+//			},
+//		},
+//	}.mappingsFromSchema()
+//	if err != nil {
+//		t.Fatalf("error: %+v", err)
+//	}
+//	expected := `
+//	if metadata.ResourceData.HasChange("some_field") {
+//		payload.SomeSchemaField = config.SomeField
+//	}
+//`
+//	assertTemplatedCodeMatches(t, expected, *actual)
+//}
 
 func TestComponentUpdate_ModelDecode(t *testing.T) {
 	actual, err := updateFuncHelpers{
