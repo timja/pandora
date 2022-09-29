@@ -20,7 +20,7 @@ func codeForExpandAndFlattenFunctions(input models.ResourceInput) (*string, erro
 	for modelName, schemaModel := range schemaModels {
 		// code for expand from Schema (config) to SDK (payload)
 		//empty := ""
-		sdkModelName, sdkModel := sdkModelFromSchemaModelName(modelName, input.SdkServiceName, sdkModels)
+		sdkModelName, sdkModel := sdkModelFromSchemaModelName(modelName, input.ResourceTypeName, sdkModels)
 		codeForExpand, err := codeForExpandSchemaToSdkType(resourceName, modelName, schemaModel, sdkModelName, sdkModel, mappings)
 		if err != nil {
 			return nil, err
