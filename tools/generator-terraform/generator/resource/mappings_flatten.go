@@ -3,11 +3,15 @@ package resource
 import (
 	"fmt"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
+	"strings"
 )
 
 func flattenAssignmentCodeForFieldObjectDefinition(fieldDefinition resourcemanager.TerraformSchemaFieldDefinition, mapping resourcemanager.FieldMappingDefinition, resourceName string) (*string, error) {
 	left := fmt.Sprintf("schema.%s", mapping.DirectAssignment.SchemaFieldPath)
 	right := fmt.Sprintf("input.%s", mapping.DirectAssignment.SdkFieldPath)
+	if strings.HasSuffix(mapping.DirectAssignment.SdkModelName, "Properties") {
+		right = fmt.Sprintf("input.Properties.%s", mapping.DirectAssignment.SdkFieldPath)
+	}
 	directAssignments := map[resourcemanager.TerraformSchemaFieldType]struct{}{
 		resourcemanager.TerraformSchemaFieldTypeBoolean:  {},
 		resourcemanager.TerraformSchemaFieldTypeDateTime: {}, // TODO: confirm
