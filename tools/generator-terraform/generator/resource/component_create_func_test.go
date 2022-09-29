@@ -888,25 +888,6 @@ func TestComponentCreate_PayloadDefinition(t *testing.T) {
 }
 
 // TODO - Reimplement this for the new mapping generation
-//func TestComponentCreate_MappingsFromSchema_NoFields(t *testing.T) {
-//	// TODO: remove this once the feature-flag is properly threaded through
-//	if !featureflags.OutputMappings {
-//		t.Skip("skipping since `featureflags.OutputMappings` is disabled")
-//	}
-//
-//	actual, err := createFunctionComponents{
-//		terraformModel: resourcemanager.TerraformSchemaModelDefinition{
-//			Fields: map[string]resourcemanager.TerraformSchemaFieldDefinition{},
-//		},
-//	}.mappingsFromSchema()
-//	if err != nil {
-//		t.Fatalf("error: %+v", err)
-//	}
-//	expected := ``
-//	assertTemplatedCodeMatches(t, expected, *actual)
-//}
-
-// TODO - Reimplement this for the new mapping generation
 //func TestComponentCreate_MappingsFromSchema_TopLevelFields(t *testing.T) {
 //	// TODO: remove this once the feature-flag is properly threaded through
 //	if !featureflags.OutputMappings {

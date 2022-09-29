@@ -17,24 +17,24 @@ func codeForExpandAndFlattenFunctions(input models.ResourceInput) (*string, erro
 	output := ""
 	for modelName, model := range models {
 		// code for expand from Schema (config) to SDK (payload)
-		empty := ""
-		codeForExpand, err := expandSchemaToSdkType(resourceName, modelName, model, mappings)
+		//empty := ""
+		codeForExpand, err := codeForExpandSchemaToSdkType(resourceName, modelName, model, mappings)
 		if err != nil {
 			return nil, err
 		}
-		if codeForExpand == nil {
-			codeForExpand = &empty
-		}
+		//if codeForExpand == nil {
+		//	codeForExpand = &empty
+		//}
 
 		// code for flatten from SDK (resp) to Schema (model)
-		codeForFlatten := &empty
-		codeForFlatten, err = flattenSdkTypeToSchema(resourceName, modelName, model, mappings)
+		//codeForFlatten := &empty
+		codeForFlatten, err := codeForFlattenSdkTypeToSchema(resourceName, modelName, model, mappings)
 		if err != nil {
 			return nil, err
 		}
-		if codeForFlatten == nil {
-			codeForFlatten = &empty
-		}
+		//if codeForFlatten == nil {
+		//	codeForFlatten = &empty
+		//}
 		methods = append(methods, strings.Join([]string{*codeForExpand, *codeForFlatten}, "\n\n"))
 	}
 
@@ -45,7 +45,7 @@ func codeForExpandAndFlattenFunctions(input models.ResourceInput) (*string, erro
 	return &output, nil
 }
 
-func expandSchemaToSdkType(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
+func codeForExpandSchemaToSdkType(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
 	// outputs func (r SomeResource) expand{input.ResourceName}ResourceSchemaTo{SdkModelName}(input {input.ResourceName}ResourceSchema) *{SdkModelForCreate} {}
 	lines := make([]string, 0)
 	sdkModelName := ""
@@ -56,7 +56,8 @@ func expandSchemaToSdkType(resourceName string, modelName string, model resource
 	if modelMappingsRaw == nil || len(*modelMappingsRaw) == 0 {
 		// nothing here... Error or silently continue?
 		// Mappings that need renaming will error out here, e.g. Sku's etc.
-		return nil, nil
+		empty := ""
+		return &empty, nil
 		// return nil, fmt.Errorf("no mappings found for model %q (resource %q)", modelName, resourceName)
 	}
 	modelMappings := *modelMappingsRaw
@@ -74,7 +75,7 @@ func expandSchemaToSdkType(resourceName string, modelName string, model resource
 			}
 
 			if field, ok := model.Fields[fieldName]; ok {
-				line, err := expandAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("input.%s", fieldName), fmt.Sprintf("schema.%s", fieldName), field)
+				line, err := expandAssignmentCodeForFieldObjectDefinition(field, mapping)
 				if err != nil {
 					return nil, err
 				}
@@ -95,7 +96,7 @@ func (r %[1]s) expand%[2]sTo%[3]s(input %[2]s) *%[4]s.%[3]s {
 	return &output, nil
 }
 
-func flattenSdkTypeToSchema(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
+func codeForFlattenSdkTypeToSchema(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
 	// outputs func (r SomeResource) flatten{SdkModelForRead}To{input.ResourceName}{SchemaModelName}Schema(input {input.ResourceName}ResourceSchema) *{SdkModelForCreate} {}
 	lines := make([]string, 0)
 	sdkModelName := ""
@@ -105,7 +106,8 @@ func flattenSdkTypeToSchema(resourceName string, modelName string, model resourc
 	}
 	if modelMappingsRaw == nil || len(*modelMappingsRaw) == 0 {
 		// nothing here... Error or continue?
-		return nil, nil
+		empty := ""
+		return &empty, nil
 		//return nil, fmt.Errorf("no mappings found for model %q (resource %q)", modelName, resourceName)
 	}
 	modelMappings := *modelMappingsRaw
@@ -122,7 +124,7 @@ func flattenSdkTypeToSchema(resourceName string, modelName string, model resourc
 				sdkModelName = mapping.DirectAssignment.SdkModelName
 			}
 			if field, ok := model.Fields[fieldName]; ok {
-				line, err := flattenAssignmentCodeForFieldObjectDefinition(fmt.Sprintf("schema.%s", fieldName), fmt.Sprintf("input.%s", fieldName), field)
+				line, err := flattenAssignmentCodeForFieldObjectDefinition(field, mapping, strings.ToLower(resourceName))
 				if err != nil {
 					return nil, err
 				}
@@ -133,7 +135,7 @@ func flattenSdkTypeToSchema(resourceName string, modelName string, model resourc
 
 	output := fmt.Sprintf(`
 func (r %[1]s) flatten%[3]sTo%[2]s(input *%[4]s.%[3]s, schema *%[2]s) error {
-	%[5]s
+%[5]s
 	
 	return nil
 }
