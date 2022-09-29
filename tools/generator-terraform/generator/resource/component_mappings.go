@@ -10,25 +10,22 @@ import (
 )
 
 func codeForExpandAndFlattenFunctions(input models.ResourceInput) (*string, error) {
-	models := input.SchemaModels
+	schemaModels := input.SchemaModels
+	sdkModels := input.Models
 	mappings := input.Details.Mappings.Fields
 	resourceName := input.SdkResourceName
 	methods := make([]string, 0)
 	output := ""
-	for modelName, model := range models {
+
+	for modelName, schemaModel := range schemaModels {
 		// code for expand from Schema (config) to SDK (payload)
 		//empty := ""
-		codeForExpand, err := codeForExpandSchemaToSdkType(resourceName, modelName, model, mappings)
+		sdkModelName, sdkModel := sdkModelFromSchemaModelName(modelName, input.SdkServiceName, sdkModels)
+		codeForExpand, err := codeForExpandSchemaToSdkType(resourceName, modelName, schemaModel, sdkModelName, sdkModel, mappings)
 		if err != nil {
 			return nil, err
 		}
-		//if codeForExpand == nil {
-		//	codeForExpand = &empty
-		//}
-
-		// code for flatten from SDK (resp) to Schema (model)
-		//codeForFlatten := &empty
-		codeForFlatten, err := codeForFlattenSdkTypeToSchema(resourceName, modelName, model, mappings)
+		codeForFlatten, err := codeForFlattenSdkTypeToSchema(resourceName, modelName, schemaModel, sdkModelName, sdkModel, mappings)
 		if err != nil {
 			return nil, err
 		}
@@ -45,10 +42,9 @@ func codeForExpandAndFlattenFunctions(input models.ResourceInput) (*string, erro
 	return &output, nil
 }
 
-func codeForExpandSchemaToSdkType(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
+func codeForExpandSchemaToSdkType(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, sdkModelName string, sdkModel resourcemanager.ModelDetails, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
 	// outputs func (r SomeResource) expand{input.ResourceName}ResourceSchemaTo{SdkModelName}(input {input.ResourceName}ResourceSchema) *{SdkModelForCreate} {}
 	lines := make([]string, 0)
-	sdkModelName := ""
 	modelMappingsRaw, err := findMappingsForSchemaModel(modelName, mappings)
 	if err != nil {
 		return nil, err
@@ -70,10 +66,6 @@ func codeForExpandSchemaToSdkType(resourceName string, modelName string, model r
 		mapping := modelMappings[fieldName]
 		switch mapping.Type {
 		case resourcemanager.DirectAssignmentMappingDefinitionType:
-			if sdkModelName == "" {
-				sdkModelName = mapping.DirectAssignment.SdkModelName
-			}
-
 			if field, ok := model.Fields[fieldName]; ok {
 				line, err := expandAssignmentCodeForFieldObjectDefinition(field, mapping)
 				if err != nil {
@@ -96,10 +88,9 @@ func (r %[1]s) expand%[2]sTo%[3]s(input %[2]s) *%[4]s.%[3]s {
 	return &output, nil
 }
 
-func codeForFlattenSdkTypeToSchema(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
+func codeForFlattenSdkTypeToSchema(resourceName string, modelName string, model resourcemanager.TerraformSchemaModelDefinition, sdkModelName string, sdkModel resourcemanager.ModelDetails, mappings []resourcemanager.FieldMappingDefinition) (*string, error) {
 	// outputs func (r SomeResource) flatten{SdkModelForRead}To{input.ResourceName}{SchemaModelName}Schema(input {input.ResourceName}ResourceSchema) *{SdkModelForCreate} {}
 	lines := make([]string, 0)
-	sdkModelName := ""
 	modelMappingsRaw, err := findMappingsForSchemaModel(modelName, mappings)
 	if err != nil {
 		return nil, err
@@ -120,9 +111,6 @@ func codeForFlattenSdkTypeToSchema(resourceName string, modelName string, model 
 		mapping := modelMappings[fieldName]
 		switch mapping.Type {
 		case resourcemanager.DirectAssignmentMappingDefinitionType:
-			if sdkModelName == "" {
-				sdkModelName = mapping.DirectAssignment.SdkModelName
-			}
 			if field, ok := model.Fields[fieldName]; ok {
 				line, err := flattenAssignmentCodeForFieldObjectDefinition(field, mapping, strings.ToLower(resourceName))
 				if err != nil {
@@ -161,4 +149,11 @@ func findMappingsForSchemaModel(input string, mappings []resourcemanager.FieldMa
 		}
 	}
 	return &output, nil
+}
+
+func sdkModelFromSchemaModelName(input string, resourcePrefix string, sdkModels map[string]resourcemanager.ModelDetails) (string, resourcemanager.ModelDetails) {
+	modelName := strings.TrimSuffix(input, "Schema")
+	modelName = strings.TrimPrefix(modelName, resourcePrefix)
+	modelName = strings.TrimPrefix(modelName, "Resource")
+	return modelName, sdkModels[modelName]
 }
