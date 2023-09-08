@@ -144,11 +144,33 @@ func consolidateIntoASingleDefinition(input []definition) (*Config, error) {
 							}
 						}
 
+						generateCreate := true
+						generateDelete := true
+						generateRead := true
+						generateUpdate := true
+
+						if def.GenerateCreate != nil {
+							generateCreate = *def.GenerateCreate
+						}
+						if def.GenerateDelete != nil {
+							generateDelete = *def.GenerateDelete
+						}
+						if def.GenerateRead != nil {
+							generateRead = *def.GenerateRead
+						}
+						if def.GenerateUpdate != nil {
+							generateUpdate = *def.GenerateUpdate
+						}
+
 						definitions[def.ResourceType] = ResourceDefinition{
 							ID:                 def.Id,
 							Name:               def.DisplayName,
 							WebsiteSubcategory: def.WebsiteSubcategory,
 							Description:        def.Description,
+							GenerateCreate:     generateCreate,
+							GenerateDelete:     generateDelete,
+							GenerateRead:       generateRead,
+							GenerateUpdate:     generateUpdate,
 							TestData: ResourceTestDataDefinition{
 								BasicVariables:    basicVariables,
 								CompleteVariables: completeVariables,

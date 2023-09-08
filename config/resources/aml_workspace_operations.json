@@ -1,0 +1,225 @@
+{
+  "operations": {
+    "CreateOrUpdate": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        202,
+        200
+      ],
+      "longRunning": true,
+      "method": "PUT",
+      "requestObject": {
+        "nestedItem": null,
+        "referenceName": "Workspace",
+        "type": "Reference"
+      },
+      "resourceIdName": "WorkspaceId",
+      "responseObject": null,
+      "uriSuffix": null,
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "Delete": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        202,
+        204,
+        200
+      ],
+      "longRunning": true,
+      "method": "DELETE",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": null,
+      "uriSuffix": null,
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "Diagnose": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        202,
+        200
+      ],
+      "longRunning": true,
+      "method": "POST",
+      "requestObject": {
+        "nestedItem": null,
+        "referenceName": "DiagnoseWorkspaceParameters",
+        "type": "Reference"
+      },
+      "resourceIdName": "WorkspaceId",
+      "responseObject": null,
+      "uriSuffix": "/diagnose",
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "Get": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "GET",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "Workspace",
+        "type": "Reference"
+      },
+      "uriSuffix": null,
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "ListByResourceGroup": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "GET",
+      "requestObject": null,
+      "resourceIdName": "ResourceGroupId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "Workspace",
+        "type": "Reference"
+      },
+      "uriSuffix": "/providers/Microsoft.MachineLearningServices/workspaces",
+      "fieldContainingPaginationDetails": "nextLink",
+      "options": {
+        "Skip": {
+          "headerName": null,
+          "queryStringName": "$skip",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "required": false
+        }
+      }
+    },
+    "ListBySubscription": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "GET",
+      "requestObject": null,
+      "resourceIdName": "SubscriptionId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "Workspace",
+        "type": "Reference"
+      },
+      "uriSuffix": "/providers/Microsoft.MachineLearningServices/workspaces",
+      "fieldContainingPaginationDetails": "nextLink",
+      "options": {
+        "Skip": {
+          "headerName": null,
+          "queryStringName": "$skip",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "required": false
+        }
+      }
+    },
+    "ListKeys": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "POST",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "ListWorkspaceKeysResult",
+        "type": "Reference"
+      },
+      "uriSuffix": "/listKeys",
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "ListNotebookAccessToken": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "POST",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "NotebookAccessTokenResult",
+        "type": "Reference"
+      },
+      "uriSuffix": "/listNotebookAccessToken",
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "ResyncKeys": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        202,
+        200
+      ],
+      "longRunning": true,
+      "method": "POST",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": null,
+      "uriSuffix": "/resyncKeys",
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "Update": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        202,
+        200
+      ],
+      "longRunning": true,
+      "method": "PATCH",
+      "requestObject": {
+        "nestedItem": null,
+        "referenceName": "WorkspaceUpdateParameters",
+        "type": "Reference"
+      },
+      "resourceIdName": "WorkspaceId",
+      "responseObject": null,
+      "uriSuffix": null,
+      "fieldContainingPaginationDetails": null,
+      "options": {}
+    },
+    "WorkspaceFeaturesList": {
+      "contentType": "application/json; charset=utf-8",
+      "expectedStatusCodes": [
+        200
+      ],
+      "longRunning": false,
+      "method": "GET",
+      "requestObject": null,
+      "resourceIdName": "WorkspaceId",
+      "responseObject": {
+        "nestedItem": null,
+        "referenceName": "AmlUserFeature",
+        "type": "Reference"
+      },
+      "uriSuffix": "/features",
+      "fieldContainingPaginationDetails": "nextLink",
+      "options": {}
+    }
+  },
+  "metaData": {
+    "resourceProvider": "Microsoft.MachineLearningServices"
+  }
+}

@@ -659,6 +659,11 @@ func (d SwaggerDefinition) parseNativeType(input *spec.Schema) *models.ObjectDef
 				Type: models.ObjectDefinitionRawFile,
 			}
 		}
+		if input.AdditionalProperties != nil {
+			return &models.ObjectDefinition{
+				Type: models.ObjectDefinitionDictionary,
+			}
+		}
 		return &models.ObjectDefinition{
 			Type: models.ObjectDefinitionRawObject,
 		}

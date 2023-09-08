@@ -1,0 +1,2493 @@
+{
+  "constants": {
+    "DiagnoseResultLevel": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Error": "Error",
+        "Information": "Information",
+        "Warning": "Warning"
+      }
+    },
+    "EncryptionStatus": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Disabled": "Disabled",
+        "Enabled": "Enabled"
+      }
+    },
+    "PrivateEndpointConnectionProvisioningState": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Creating": "Creating",
+        "Deleting": "Deleting",
+        "Failed": "Failed",
+        "Succeeded": "Succeeded"
+      }
+    },
+    "PrivateEndpointServiceConnectionStatus": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Approved": "Approved",
+        "Disconnected": "Disconnected",
+        "Pending": "Pending",
+        "Rejected": "Rejected",
+        "Timeout": "Timeout"
+      }
+    },
+    "ProvisioningState": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Canceled": "Canceled",
+        "Creating": "Creating",
+        "Deleting": "Deleting",
+        "Failed": "Failed",
+        "Succeeded": "Succeeded",
+        "Unknown": "Unknown",
+        "Updating": "Updating"
+      }
+    },
+    "PublicNetworkAccess": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Disabled": "Disabled",
+        "Enabled": "Enabled"
+      }
+    },
+    "SkuTier": {
+      "caseInsensitive": false,
+      "type": "string",
+      "values": {
+        "Basic": "Basic",
+        "Free": "Free",
+        "Premium": "Premium",
+        "Standard": "Standard"
+      }
+    }
+  },
+  "models": {
+    "AmlUserFeature": {
+      "fields": {
+        "Description": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "description",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "DisplayName": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "displayName",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Id": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "id",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "CosmosDbSettings": {
+      "fields": {
+        "CollectionsThroughput": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "collectionsThroughput",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Integer"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "DiagnoseRequestProperties": {
+      "fields": {
+        "ApplicationInsights": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "applicationInsights",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ContainerRegistry": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "containerRegistry",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "DnsResolution": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "dnsResolution",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "KeyVault": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyVault",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Nsg": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "nsg",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Others": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "others",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ResourceLock": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "resourceLock",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "StorageAccount": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "storageAccount",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Udr": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "udr",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": null,
+              "type": "RawObject"
+            },
+            "referenceName": null,
+            "type": "Dictionary"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "DiagnoseResponseResult": {
+      "fields": {
+        "Value": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "value",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "DiagnoseResponseResultValue",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "DiagnoseResponseResultValue": {
+      "fields": {
+        "ApplicationInsightsResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "applicationInsightsResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ContainerRegistryResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "containerRegistryResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "DnsResolutionResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "dnsResolutionResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "KeyVaultResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyVaultResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "NetworkSecurityRuleResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "networkSecurityRuleResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "OtherResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "otherResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ResourceLockResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "resourceLockResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "StorageAccountResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "storageAccountResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "UserDefinedRouteResults": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "userDefinedRouteResults",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "DiagnoseResult",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "DiagnoseResult": {
+      "fields": {
+        "Code": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "code",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Level": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "level",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "DiagnoseResultLevel",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Message": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "message",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "DiagnoseWorkspaceParameters": {
+      "fields": {
+        "Value": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "value",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "DiagnoseRequestProperties",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "EncryptionKeyVaultProperties": {
+      "fields": {
+        "IdentityClientId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "identityClientId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "KeyIdentifier": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyIdentifier",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        },
+        "KeyVaultArmId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyVaultArmId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "EncryptionProperty": {
+      "fields": {
+        "Identity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "identity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "IdentityForCmk",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "KeyVaultProperties": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyVaultProperties",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "EncryptionKeyVaultProperties",
+            "type": "Reference"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        },
+        "Status": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "status",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "EncryptionStatus",
+            "type": "Reference"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "IdentityForCmk": {
+      "fields": {
+        "UserAssignedIdentity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "userAssignedIdentity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "ListNotebookKeysResult": {
+      "fields": {
+        "PrimaryAccessKey": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "primaryAccessKey",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "SecondaryAccessKey": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "secondaryAccessKey",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "ListWorkspaceKeysResult": {
+      "fields": {
+        "AppInsightsInstrumentationKey": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "appInsightsInstrumentationKey",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ContainerRegistryCredentials": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "containerRegistryCredentials",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "RegistryListCredentialsResult",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "NotebookAccessKeys": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "notebookAccessKeys",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "ListNotebookKeysResult",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "UserStorageKey": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "userStorageKey",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "UserStorageResourceId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "userStorageResourceId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "NotebookAccessTokenResult": {
+      "fields": {
+        "AccessToken": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "accessToken",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ExpiresIn": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "expiresIn",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Integer"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "HostName": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "hostName",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "NotebookResourceId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "notebookResourceId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PublicDns": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "publicDns",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "RefreshToken": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "refreshToken",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Scope": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "scope",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "TokenType": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tokenType",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "NotebookPreparationError": {
+      "fields": {
+        "ErrorMessage": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "errorMessage",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "StatusCode": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "statusCode",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Integer"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "NotebookResourceInfo": {
+      "fields": {
+        "Fqdn": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "fqdn",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "NotebookPreparationError": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "notebookPreparationError",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "NotebookPreparationError",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ResourceId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "resourceId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "Password": {
+      "fields": {
+        "Name": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "name",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Value": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "value",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "PrivateEndpoint": {
+      "fields": {
+        "Id": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "id",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "SubnetArmId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "subnetArmId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "PrivateEndpointConnection": {
+      "fields": {
+        "Id": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "id",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Identity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "identity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "LegacySystemAndUserAssignedIdentityMap"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Location": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "location",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Location"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Name": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "name",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Properties": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "properties",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateEndpointConnectionProperties",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Sku": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "sku",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "Sku",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "SystemData": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "systemData",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "SystemData"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Tags": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tags",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Tags"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Type": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "type",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "PrivateEndpointConnectionProperties": {
+      "fields": {
+        "PrivateEndpoint": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "privateEndpoint",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateEndpoint",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrivateLinkServiceConnectionState": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "privateLinkServiceConnectionState",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateLinkServiceConnectionState",
+            "type": "Reference"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        },
+        "ProvisioningState": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "provisioningState",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateEndpointConnectionProvisioningState",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "PrivateLinkServiceConnectionState": {
+      "fields": {
+        "ActionsRequired": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "actionsRequired",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Description": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "description",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Status": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "status",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateEndpointServiceConnectionStatus",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "RegistryListCredentialsResult": {
+      "fields": {
+        "Location": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "location",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Location"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Passwords": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "passwords",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "Password",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Username": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "username",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "ServiceManagedResourcesSettings": {
+      "fields": {
+        "CosmosDb": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "cosmosDb",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "CosmosDbSettings",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "SharedPrivateLinkResource": {
+      "fields": {
+        "Name": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "name",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Properties": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "properties",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "SharedPrivateLinkResourceProperty",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "SharedPrivateLinkResourceProperty": {
+      "fields": {
+        "GroupId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "groupId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrivateLinkResourceId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "privateLinkResourceId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "RequestMessage": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "requestMessage",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Status": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "status",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PrivateEndpointServiceConnectionStatus",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "Sku": {
+      "fields": {
+        "Capacity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "capacity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Integer"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Family": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "family",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Name": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "name",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": false,
+          "required": true,
+          "validation": null
+        },
+        "Size": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "size",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Tier": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tier",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "SkuTier",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "Workspace": {
+      "fields": {
+        "Id": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "id",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Identity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "identity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "LegacySystemAndUserAssignedIdentityMap"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Location": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "location",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Location"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Name": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "name",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Properties": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "properties",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "WorkspaceProperties",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Sku": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "sku",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "Sku",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "SystemData": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "systemData",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "SystemData"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Tags": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tags",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Tags"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Type": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "type",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "WorkspaceProperties": {
+      "fields": {
+        "AllowPublicAccessWhenBehindVnet": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "allowPublicAccessWhenBehindVnet",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Boolean"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ApplicationInsights": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "applicationInsights",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ContainerRegistry": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "containerRegistry",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Description": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "description",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "DiscoveryUrl": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "discoveryUrl",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Encryption": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "encryption",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "EncryptionProperty",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "FriendlyName": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "friendlyName",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "HbiWorkspace": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "hbiWorkspace",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Boolean"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ImageBuildCompute": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "imageBuildCompute",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "KeyVault": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "keyVault",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "MlFlowTrackingUri": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "mlFlowTrackingUri",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "NotebookInfo": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "notebookInfo",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "NotebookResourceInfo",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrimaryUserAssignedIdentity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "primaryUserAssignedIdentity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrivateEndpointConnections": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "privateEndpointConnections",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "PrivateEndpointConnection",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrivateLinkCount": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "privateLinkCount",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Integer"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ProvisioningState": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "provisioningState",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "ProvisioningState",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PublicNetworkAccess": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "publicNetworkAccess",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PublicNetworkAccess",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ServiceManagedResourcesSettings": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "serviceManagedResourcesSettings",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "ServiceManagedResourcesSettings",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ServiceProvisionedResourceGroup": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "serviceProvisionedResourceGroup",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "SharedPrivateLinkResources": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "sharedPrivateLinkResources",
+          "objectDefinition": {
+            "nestedItem": {
+              "nestedItem": null,
+              "referenceName": "SharedPrivateLinkResource",
+              "type": "Reference"
+            },
+            "referenceName": null,
+            "type": "List"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "StorageAccount": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "storageAccount",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "StorageHnsEnabled": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "storageHnsEnabled",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Boolean"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "TenantId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tenantId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "V1LegacyMode": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "v1LegacyMode",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Boolean"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "WorkspaceId": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "workspaceId",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "WorkspacePropertiesUpdateParameters": {
+      "fields": {
+        "ApplicationInsights": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "applicationInsights",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ContainerRegistry": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "containerRegistry",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Description": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "description",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "FriendlyName": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "friendlyName",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ImageBuildCompute": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "imageBuildCompute",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PrimaryUserAssignedIdentity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "primaryUserAssignedIdentity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "String"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "PublicNetworkAccess": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "publicNetworkAccess",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "PublicNetworkAccess",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "ServiceManagedResourcesSettings": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "serviceManagedResourcesSettings",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "ServiceManagedResourcesSettings",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    },
+    "WorkspaceUpdateParameters": {
+      "fields": {
+        "Identity": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "identity",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "LegacySystemAndUserAssignedIdentityMap"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Properties": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "properties",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "WorkspacePropertiesUpdateParameters",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Sku": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "sku",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": "Sku",
+            "type": "Reference"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        },
+        "Tags": {
+          "dateFormat": null,
+          "default": null,
+          "forceNew": false,
+          "isTypeHint": false,
+          "jsonName": "tags",
+          "objectDefinition": {
+            "nestedItem": null,
+            "referenceName": null,
+            "type": "Tags"
+          },
+          "optional": true,
+          "required": false,
+          "validation": null
+        }
+      },
+      "parentTypeName": null,
+      "typeHintIn": null,
+      "typeHintValue": null
+    }
+  },
+  "resourceIds": {
+    "WorkspaceId": {
+      "commonAlias": null,
+      "constantNames": [],
+      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}",
+      "segments": [
+        {
+          "constantReference": null,
+          "exampleValue": "subscriptions",
+          "fixedValue": "subscriptions",
+          "name": "staticSubscriptions",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "12345678-1234-9876-4563-123456789012",
+          "fixedValue": null,
+          "name": "subscriptionId",
+          "type": "SubscriptionId"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "resourceGroups",
+          "fixedValue": "resourceGroups",
+          "name": "staticResourceGroups",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "example-resource-group",
+          "fixedValue": null,
+          "name": "resourceGroupName",
+          "type": "ResourceGroup"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "providers",
+          "fixedValue": "providers",
+          "name": "staticProviders",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "Microsoft.MachineLearningServices",
+          "fixedValue": "Microsoft.MachineLearningServices",
+          "name": "staticMicrosoftMachineLearningServices",
+          "type": "ResourceProvider"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "workspaces",
+          "fixedValue": "workspaces",
+          "name": "staticWorkspaces",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "workspaceValue",
+          "fixedValue": null,
+          "name": "workspaceName",
+          "type": "UserSpecified"
+        }
+      ]
+    },
+    "ResourceGroupId": {
+      "commonAlias": "ResourceGroup",
+      "constantNames": [],
+      "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}",
+      "segments": [
+        {
+          "constantReference": null,
+          "exampleValue": "subscriptions",
+          "fixedValue": "subscriptions",
+          "name": "subscriptions",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "12345678-1234-9876-4563-123456789012",
+          "fixedValue": null,
+          "name": "subscriptionId",
+          "type": "SubscriptionId"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "resourceGroups",
+          "fixedValue": "resourceGroups",
+          "name": "resourceGroups",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "example-resource-group",
+          "fixedValue": null,
+          "name": "resourceGroupName",
+          "type": "ResourceGroup"
+        }
+      ]
+    },
+    "SubscriptionId": {
+      "commonAlias": "Subscription",
+      "constantNames": [],
+      "id": "/subscriptions/{subscriptionId}",
+      "segments": [
+        {
+          "constantReference": null,
+          "exampleValue": "subscriptions",
+          "fixedValue": "subscriptions",
+          "name": "subscriptions",
+          "type": "Static"
+        },
+        {
+          "constantReference": null,
+          "exampleValue": "12345678-1234-9876-4563-123456789012",
+          "fixedValue": null,
+          "name": "subscriptionId",
+          "type": "SubscriptionId"
+        }
+      ]
+    }
+  }
+}

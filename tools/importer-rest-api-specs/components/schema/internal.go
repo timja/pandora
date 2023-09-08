@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/pandora/tools/sdk/resourcemanager"
 )
 
@@ -47,6 +48,12 @@ func (p operationPayloads) createReadUpdatePayloadsProperties() []resourcemanage
 func (p operationPayloads) getPropertiesModelWithinModel(input resourcemanager.ModelDetails, models map[string]resourcemanager.ModelDetails) (*string, *resourcemanager.ModelDetails) {
 	if props, ok := getField(input, "Properties"); ok {
 		if props.ObjectDefinition.Type != resourcemanager.ReferenceApiObjectDefinitionType {
+			// Chaos 2023-04-15-preview Targets resource return an empty properties object which given what the resource does is acceptable.
+			if props.ObjectDefinition.Type == resourcemanager.RawObjectApiObjectDefinitionType {
+				return pointer.To("properties"), pointer.To(resourcemanager.ModelDetails{})
+			}
+
+			// TODO if this returns nil it might be good to surface an error with instructions e.g. you may want raise swagger bug or consider hand writing the create?
 			return nil, nil
 		}
 

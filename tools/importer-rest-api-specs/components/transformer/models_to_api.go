@@ -147,16 +147,21 @@ func apiObjectDefinitionFromModelObjectDefinition(input *models.ObjectDefinition
 	}
 
 	if input.Type == models.ObjectDefinitionDictionary {
-		nestedItem, err := apiObjectDefinitionFromModelObjectDefinition(input.NestedItem, nil)
-		if err != nil {
-			return nil, fmt.Errorf("mapping dictionary item: %+v", err)
-		}
-
-		return &resourcemanager.ApiObjectDefinition{
-			NestedItem:    nestedItem,
+		objectDefinition := &resourcemanager.ApiObjectDefinition{
+			NestedItem:    nil,
 			ReferenceName: nil,
 			Type:          resourcemanager.DictionaryApiObjectDefinitionType,
-		}, nil
+		}
+
+		if input.NestedItem != nil {
+			nestedItem, err := apiObjectDefinitionFromModelObjectDefinition(input.NestedItem, nil)
+			if err != nil {
+				return nil, fmt.Errorf("mapping dictionary item: %+v", err)
+			}
+			objectDefinition.NestedItem = nestedItem
+		}
+
+		return objectDefinition, nil
 	}
 
 	if input.Type == models.ObjectDefinitionList {
