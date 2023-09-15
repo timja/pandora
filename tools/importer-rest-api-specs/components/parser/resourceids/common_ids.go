@@ -24,6 +24,10 @@ var commonIdTypes = []commonIdMatcher{
 	commonIdVirtualNetwork{},
 	commonIdVPNConnection{},
 
+	// Bot Service
+	commonIdBotService{},
+	commonIdBotServiceChannel{},
+
 	// RP Specific
 	commonIdCloudServicesIPConfiguration{},
 	commonIdCloudServicesPublicIPAddress{},

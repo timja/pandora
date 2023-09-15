@@ -2,7 +2,6 @@ package resourceids
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/pandora/tools/importer-rest-api-specs/models"
 )
 

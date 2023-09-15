@@ -1397,6 +1397,65 @@ func TestParseResourceIdsCommon(t *testing.T) {
 	checkId(t, "UserAssignedIdentity")
 }
 
+func TestParseResourceIdsContainingTheSameConstantWithDifferentValues(t *testing.T) {
+	// https://github.com/hashicorp/pandora/issues/2830 defines an issue where the same URI can contain a constant
+	// with only a subset of values allowed for a sub-item.
+	//
+	// In this case we'd need to define a Common ID to have a canonical list of values for the Constant
+	// as such we're intentionally special-casing these
+	result, err := ParseSwaggerFileForTesting(t, "resource_ids_same_path_different_constant_values.json")
+	if err != nil {
+		t.Fatalf("parsing: %+v", err)
+	}
+	if result == nil {
+		t.Fatal("result was nil")
+	}
+	if len(result.Resources) != 1 {
+		t.Fatalf("expected 1 resource but got %d", len(result.Resources))
+	}
+
+	example, ok := result.Resources["Example"]
+	if !ok {
+		t.Fatalf("no resources were output with the tag Example")
+	}
+
+	if len(example.Constants) != 0 {
+		t.Fatalf("expected no Constants but got %d", len(example.Constants))
+	}
+	if len(example.Models) != 0 {
+		t.Fatalf("expected no Models but got %d", len(example.Models))
+	}
+	if len(example.Operations) != 2 {
+		t.Fatalf("expected 2 Operations but got %d", len(example.Operations))
+	}
+	if len(example.ResourceIds) != 1 {
+		t.Fatalf("expected 1 ResourceId but got %d", len(example.ResourceIds))
+	}
+
+	for _, id := range example.ResourceIds {
+		if id.ID() == "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{botServiceName}/channels/{channelName}" {
+			if id.CommonAlias == nil {
+				t.Fatalf("expected a CommonAlias of `BotServiceChannel` but got nil")
+			}
+			if *id.CommonAlias != "BotServiceChannel" {
+				t.Fatalf("expected a CommonAlias of `BotServiceChannel` but got %q", *id.CommonAlias)
+			}
+			continue
+		}
+
+		t.Fatalf("Unexpected Id: %q", id.ID())
+	}
+
+	for _, operation := range example.Operations {
+		if operation.ResourceIdName == nil {
+			t.Fatalf("expected `operation.ResourceIdName` to have be `BotServiceChannelId` but got nil")
+		}
+		if *operation.ResourceIdName != "BotServiceChannelId" {
+			t.Fatalf("expected `operation.ResourceIdName` to have be `BotServiceChannelId` but got %q", *operation.ResourceIdName)
+		}
+	}
+}
+
 func validateResourceId(actualValue models.ParsedResourceId, expectedString string, expected models.ParsedResourceId) error {
 	if actualValue.String() != expectedString {
 		return fmt.Errorf("expected the ResourceId to be %q but got %q", expectedString, actualValue.String())

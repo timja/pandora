@@ -105,7 +105,6 @@ func ConstantResourceIDSegment(name, constantName string) resourcemanager.Resour
 		ConstantReference: &constantName,
 	}
 }
-
 func ResourceProviderResourceIDSegment(name, resourceProvider string) resourcemanager.ResourceIdSegment {
 	return resourcemanager.ResourceIdSegment{
 		Type:       resourcemanager.ResourceProviderSegment,
