@@ -65,6 +65,27 @@ func (pri ParsedResourceId) Matches(other ParsedResourceId) bool {
 				return false
 			}
 			if first.ConstantReference != nil && second.ConstantReference != nil && *first.ConstantReference != *second.ConstantReference {
+				knownConstantAliases := map[string]struct{}{
+					// NOTE: This list should only be used when a CommonID exists for the associated Resource ID containing a Constant
+
+					// Bot Service Channel
+					"ChannelType":               {}, // our reference in CommonIDs, since this is a Type of Channel
+					"ChannelName":               {}, // https://github.com/Azure/azure-rest-api-specs/blob/95c0363e4cae8756c6a33b58add67776db427bbc/specification/botservice/resource-manager/Microsoft.BotService/preview/2021-05-01-preview/botservice.json#L3467-L3558
+					"RegenerateKeysChannelName": {}, // https://github.com/Azure/azure-rest-api-specs/blob/95c0363e4cae8756c6a33b58add67776db427bbc/specification/botservice/resource-manager/Microsoft.BotService/preview/2021-05-01-preview/botservice.json#L3559-L3584
+				}
+				firstIsAlias := false
+				if first.ConstantReference != nil {
+					_, firstIsAlias = knownConstantAliases[*first.ConstantReference]
+				}
+				secondIsAlias := false
+				if second.ConstantReference != nil {
+					_, secondIsAlias = knownConstantAliases[*second.ConstantReference]
+				}
+				if firstIsAlias || secondIsAlias {
+					continue
+				}
+
+				// if not, the segment names don't match and we can ignore this
 				return false
 			}
 

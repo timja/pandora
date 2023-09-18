@@ -24,7 +24,7 @@ func (c commonIdBotServiceChannel) id() models.ParsedResourceId {
 			models.StaticResourceIDSegment("botServices", "botServices"),
 			models.UserSpecifiedResourceIDSegment("botServiceName"),
 			models.StaticResourceIDSegment("channels", "channels"),
-			models.ConstantResourceIDSegment("channelType", "channelType"),
+			models.ConstantResourceIDSegment("channelType", "ChannelType"),
 		},
 	}
 }

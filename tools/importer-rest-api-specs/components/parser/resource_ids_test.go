@@ -1433,7 +1433,7 @@ func TestParseResourceIdsContainingTheSameConstantWithDifferentValues(t *testing
 	}
 
 	for _, id := range example.ResourceIds {
-		if id.ID() == "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{botServiceName}/channels/{channelName}" {
+		if id.ID() == "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{botServiceName}/channels/{channelType}" {
 			if id.CommonAlias == nil {
 				t.Fatalf("expected a CommonAlias of `BotServiceChannel` but got nil")
 			}
