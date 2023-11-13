@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package models
 
 // TerraformSchemaObjectDefinition describes the Type used in a Terraform Schema field.

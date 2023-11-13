@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package models
 
 // TerraformSchemaModel defines a model used in the Terraform Schema for a Resource.

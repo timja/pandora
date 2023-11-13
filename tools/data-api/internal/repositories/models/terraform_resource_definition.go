@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package models
 
 // TerraformResourceDefinition describes a Resource with information specific to Terraform
